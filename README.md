@@ -1,23 +1,13 @@
-# milano
+# ample
 
-### _a minimal hugo theme_
+### _a minimal and AMP-compatible hugo theme_
 
+**Ample** is a Hugo theme based on [Milano](https://github.com/oneleaftea/milano), which is itself a fork of [Xmin](https://xmin.yihui.name/) by [Yihui Xie](https://yihui.name). In the spirit of its ancestors, and to remain compliant with the restrictions of [Accelerated Mobile Pages](https://www.ampproject.org/), this theme does not use any javascript and employs only minimal CSS, but adds the benefits of AMP and SEO data.
 
-For a live demo, visit this [demo site](https://milano.thechens.org/).
+In addition to the combined features of Milano and Xmin, several features have been added:
 
-**Milano** is a Hugo theme based on [Xmin](https://xmin.yihui.name/) by [Yihui Xie](https://yihui.name). In the spirit of Xmin, this theme does not use any javascript or use any complex css like bootstrap. However, several changes were made to the layout and features available in this theme. 
+* Added AMP-specific **boilerplate and configuration**.
+* Switched to [Hugo Pipes](https://gohugo.io/hugo-pipes/introduction/) to **concat** and **minify** custom CSS.
+* Some modifications to the overall look and style.
 
-A number of features added:
-
-* Added support for **clickable tags and categories** to show in posts
-* Added support for **Google Fonts**. Simply add your favorite Google font in ```config.toml```
-* Added **social media links** to the footer, using Font-Awesome
-* Added **pagination** to ```list.html``` with customization available in ```config.toml```. This adds arrows to the bottom of the homepage as well as other list pages (e.g. ```/post/```)
-* Added **Disqus** and **Google Analytics** Support (just add your short-name and GA site-id to ```config.toml```)
-* Added **Related Posts** feature
-* Added **Post Navigation** below posts
-* Made modifications to the overall look and style
-
-As with Xmin, it is fully functional. It supports pages (including the home page), blog posts, a navigation menu, categories, tags, and RSS. 
-
-All pages not under the root directory of the website are listed below. You can also visit the list page of a single section, e.g., [posts](https://milano.thechens.org/post/). See the [About](https://milano.thechens.org/page/about/) page for the usage of this theme.
+As with Xmin, it is fully functional. It supports pages (including the home page), blog posts, a navigation menu, categories, tags, and RSS.

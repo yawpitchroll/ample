@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html ⚡ lang="{{ .Site.LanguageCode }}">
+<head>
+    <meta charset="utf-8">
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>{{ block "title" . }}{{ .Param "Title" }}{{ end }}</title>
+    {{ partial "head_custom.html" . | chomp }}
+    {{ template "_internal/google_analytics.html" . }}
+    {{ .Hugo.Generator }}
+    {{ partial "fonts/main.html" . | chomp }}
+    {{ partial "fonts/title.html" . | chomp }}
+    {{ partial "fonts/code.html" . | chomp }}
+    {{ partial "fonts/font-awesome.html" . | chomp }}
+    {{ partial "amp/boilerplate.html" . | chomp }}
+    {{ partial "amp/custom.html" . | chomp }}
+    <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
+</head>
+<body>
+    <amp-sidebar id="nav" layout="nodisplay" side="right">
+        <div role="button" aria-label="close menu" on="tap:nav.toggle" tabindex="0" class="sidebar">
+            <i class="fa fa-angle-double-right"></i>
+        </div>
+        <ul class="ns">
+            {{ range .Site.Menus.main }}
+            <li class="nz nx"><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
+            {{ end }}
+        </ul>
+    </amp-sidebar>
+
+    <div class="container">
+        <header>
+            <nav>
+                <div class="navbar">
+                    <ul class="menu">
+                        {{ range .Site.Menus.main }}
+                        <li class="item"><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
+                        {{ end }}
+                    </ul>
+                    <div role="button" aria-label="open menu" on="tap:nav.toggle" tabindex="0" class="sidebar">
+                        <i class="fa fa-bars"></i>
+                    </div>
+                </div>
+                <hr/>
+            </nav>
+        </header>
+        
+        <article>
+            {{ block "main" . }}
+            {{ end }}
+        </article>
+        
+        <footer>
+            <hr/>
+            {{ partial "foot_custom.html" . }}
+            <nav>
+                <ul class="social">
+                    {{ if .Site.Menus.icon }}
+                    {{ range sort .Site.Menus.icon }}
+                    <li>
+                        <a href="{{ .URL }}"><i class="fa fa-{{ .Name }}"></i></a>
+                    </li>
+                    {{ end }}
+                    {{ end }}
+                    <li>
+                        <a href="{{ .RSSLink }}"><i class="fa fa-rss-square"></i></a>
+                    </li>
+                </ul>
+            </nav>
+            {{ with .Site.Params.footer }}
+            <p class="copyright text-muted">{{ . | markdownify }}</p>
+            {{ end }}
+        </footer>
+    </div>
+</body>
+</html>

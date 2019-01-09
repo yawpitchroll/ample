@@ -1,0 +1,8 @@
+$fontMain: {{ .Param "fonts.main" | default "Optima"}};
+$fontTitle: {{ .Param "fonts.title" | default "Optima" }};
+$fontCode: {{ .Param "fonts.code" | default "Consolas" }};
+$fontAccent: {{ .Param "fonts.accent" | default "#0078ff" }};
+/*@import "normalize";*/
+/*@import "1bx";*/
+@import "style";
+@import "fonts";

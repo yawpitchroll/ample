@@ -1,0 +1,3 @@
+{{- $fonts := (.Scratch.Get "fonts").google -}}
+{{- $fontstring := delimit $fonts "|" -}}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family={{ $fontstring }}">

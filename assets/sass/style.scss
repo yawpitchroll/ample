@@ -1,0 +1,473 @@
+@import "normalize";
+
+/* variables used throughout the style sheet */
+$breakpoint: 45rem;
+$font-basis: 1rem;
+$font-factor: 1.2;
+$header-basis: $font-basis * $font-factor;
+$header-size: $header-basis * 3;
+$horizontal-pad: $font-basis * 2;
+$branding-fill: {{ (.Scratch.Get "branding").fill }};
+$branding-accent: {{ (.Scratch.Get "branding").accent }};
+
+/* placeholders for various properties */
+%font-brand {
+    font-family: {{ (.Scratch.Get "fonts").brand }}, monospace;
+}
+
+%font-brand-caps {
+    @extend %font-brand;
+    text-transform: uppercase;
+}
+
+%font-title {
+    font-family: {{ (.Scratch.Get "fonts").title }}, sans-serif;
+}
+
+%font-main {
+    font-family: {{ (.Scratch.Get "fonts").main }}, sans-serif;
+}
+
+%font-code {
+    font-family: {{ (.Scratch.Get "fonts").code }}, monospace;
+}
+
+
+html {
+    height: 100%;
+}
+
+body {
+    @extend %font-title;
+    background-color: white;
+    color: $branding-fill;
+    font-size: $font-basis;
+    height: 100vh;
+}
+
+$curr-size: $font-basis;
+@for $index from 1 through 6 {
+    h#{7-$index} {
+        @extend %font-title;
+        font-size: $curr-size;
+    }
+    $curr-size: $curr-size * $font-factor;
+}
+
+code {
+    font-size: $font-basis / $font-factor;
+}
+
+main {
+    @extend %font-main;
+}
+
+code {
+    @extend %font-code;
+}
+
+:root {
+    --accent: $branding-accent
+}
+
+%brand-hover {
+    transition: 200ms;
+    transition-timing-function: ease-in-out;
+    color: $branding-accent;
+}
+
+%brand-hover-no-decoration {
+    @extend %brand-hover;
+    text-decoration: none;
+}
+
+%brand-hover-masthead {
+    @extend %brand-hover-no-decoration;
+    fill: $branding-accent;
+}
+
+%header-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-height: $header-size;
+    height: $header-size;
+    width: 100%;
+    box-shadow: 0 0.2rem 0.02rem rgba(70, 70, 70, 0.3);
+    font-size: $header-basis;
+}
+
+.navbar {
+    @extend %header-bar;
+    @extend %font-brand-caps;
+    background-color: white;
+    fill: $branding-fill;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    @media only screen and (min-width: $breakpoint) {
+        align-items: baseline;
+    }
+}
+
+.navbar-branding {
+    padding-left: $horizontal-pad;
+    flex: 1 0 0;
+    text-align: left;
+}
+
+.navbar-branding svg {
+    height: $header-basis;
+    width: auto;
+    vertical-align: middle;
+    padding-bottom: 0.10rem;
+}
+
+.navbar-items {
+    flex: 1 0 0;
+    text-align: right;
+    padding-right: $horizontal-pad;
+    display: none;
+
+    @media only screen and (min-width: $breakpoint) {
+        display: inline-block;
+    }
+}
+
+.navbar-item {
+    display: inline-block;
+}
+
+.navbar-toggle {
+    padding-right: $horizontal-pad;
+    cursor: pointer;
+    flex: 1 0 0;
+    text-align: right;
+
+    @media only screen and (min-width: $breakpoint) {
+        display: none;
+    }
+}
+
+.navbar a {
+    color: $branding-fill;
+}
+
+.navbar-toggle:hover,
+.navbar a:hover {
+    @extend %brand-hover-masthead;
+}
+
+.sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.9);
+    text-align: right;
+    width: 100%;
+}
+
+.sidebar-head {
+    @extend %header-bar;
+    @extend %font-brand;
+    background: rgba(255, 255, 255, 0.6);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebar-toggle {
+    padding-right: $horizontal-pad;
+    cursor: pointer;
+    flex: 1 0 0;
+    text-align: right;
+    font-size: 1.65rem;
+}
+
+.sidebar a {
+    color: $branding-fill;
+}
+
+.sidebar-toggle:hover,
+.sidebar a:hover {
+    @extend %brand-hover-no-decoration;
+}
+
+.sidebar-items {
+    padding-top: $header-size + 1;
+    padding-right: $horizontal-pad;
+    font-size: 1.65rem
+}
+
+.sidebar-item {
+    display: block
+}
+
+.site-content {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+    @media only screen and (min-width: $breakpoint) {
+        width: $breakpoint;
+    }
+}
+
+.site-main {
+    padding-top: $header-size + 1;
+    padding-right: $font-basis;
+    padding-left: $font-basis;
+    flex: 1 0 auto;
+    
+    @media only screen and (min-width: $breakpoint) {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    hyphens: auto;
+}
+
+.article-content {
+}
+
+.main-footer {
+    flex-shrink: 0;
+}
+
+.site-footer {
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.social-items {
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+}
+
+.social-items a {
+    color: $branding-fill;
+}
+
+.social-items a:hover {
+    @extend %brand-hover-no-decoration;
+}
+
+.social-item {
+    display: inline-block;
+    padding: 0 $font-basis * 0.50;
+    font-size: 1.8rem;
+}
+
+.article-header {
+    padding: $font-basis 0;
+}
+
+.article-metadata-items {
+    padding: 0;
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: baseline;
+    font-size: $font-basis * 0.8;
+    text-transform: uppercase;
+}
+
+.article-metadata-item {
+    display: inline-block;
+    padding-left: $font-basis * 0.8;
+}
+
+.article-metadata-item:first-of-type {
+    padding-left: $font-basis * 0.2;
+}
+
+.copyright {
+    @extend %font-brand-caps;
+    font-size: .85em
+}
+
+.title {
+    font-weight: bold;
+    margin: 0;
+}
+
+/*
+
+.menu li {
+    display: inline-block
+}
+
+.menu a {
+    padding: 5px
+}
+
+.menu {
+    padding: 0px
+}
+
+.article-meta {
+    padding: 18px
+}
+
+.title {
+    font-weight: bold;
+    font-size: 2.25rem;
+    line-height: 1em
+}
+
+.meta {
+    margin: 2px
+}
+
+.menu,
+.article-meta,
+.comment,
+.related,
+footer {
+    text-align: center
+}
+
+hr {
+    border-style: dashed;
+    color: #ddd
+}
+
+.social li {
+    font-size: 1.8rem;
+    letter-spacing: -0.25rem
+}
+
+a:link,
+a:visited,
+a:hover {
+    color: var(--accent)
+}
+.menu a,
+.social a,
+footer a,
+
+*/
+a.icon:hover,
+a:link,
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline
+}
+/*
+
+pre {
+    border: 1px solid #ddd;
+    padding: 1em;
+    overflow-x: auto
+}
+
+pre,
+code,
+blockquote {
+    background: #f7f7f7
+}
+
+pre code {
+    background: none
+}
+
+blockquote {
+    border-left: 5px solid #ccc;
+    padding: 3px 1em 3px
+}
+
+img,
+iframe,
+video {
+    max-width: 100%
+}
+
+main {
+    hyphens: auto
+}
+
+.copyright {
+    @extend %font-brand-caps;
+    font-size: .85em
+}
+
+.pages {
+    padding: 15px 0;
+    text-align: center
+}
+
+.pages-icon {
+    padding: 0 15px
+}
+
+table {
+    margin: auto;
+    border-top: 1px solid #666;
+    border-bottom: 1px solid #666
+}
+
+table thead th {
+    border-bottom: 1px solid #ddd
+}
+
+th,
+td {
+    padding: 5px
+}
+
+thead,
+tfoot,
+tr:nth-child(even) {
+    background: #eee
+}
+
+*/
+
+.post-nav {
+    @extend %font-brand-caps;
+    font-size: $font-basis * 0.9;
+    text-transform: uppercase;
+    margin-top: $font-basis;
+    display: none;
+    justify-content: space-between;
+    color: #ddd;
+
+    @media only screen and (min-width: $breakpoint) {
+        display: flex;
+    }
+}
+
+.post-nav a {
+    color: $branding-fill;
+    text-decoration: none
+}
+
+.post-nav-title {
+    color: #ddd
+}
+
+.post-nav a:hover,
+.post-nav-title:hover {
+    @extend %brand-hover-no-decoration;
+}
+
+.post-nav-prev {
+    text-align: left;
+    padding-left: $font-basis;
+}
+
+.post-nav-next {
+    text-align: right;
+    padding-right: $font-basis;
+}

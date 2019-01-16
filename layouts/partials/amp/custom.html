@@ -1,5 +1,5 @@
 {{- $css_options := (dict "outputStyle" "compressed") -}}
-{{- $css_template := resources.Get "sass/main.scss" -}}
-{{- $css_content := $css_template | resources.ExecuteAsTemplate "main.scss" . -}}
+{{- $css_template := resources.Get "sass/style.scss" -}}
+{{- $css_content := $css_template | resources.ExecuteAsTemplate "style.scss" . -}}
 {{- $css_file := $css_content | toCSS $css_options -}}
 <style amp-custom>{{ $css_file.Content | chomp | safeCSS }}</style>

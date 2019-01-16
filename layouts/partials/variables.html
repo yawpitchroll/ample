@@ -1,0 +1,27 @@
+{{- /* BEGIN FONTS */ -}}
+{{- $brand := .Param "fonts.brand" | default .Site.Data.ample.defaults.fonts.brand -}}
+{{- .Scratch.SetInMap "fonts" "brand" $brand -}}
+{{- $title := .Param "fonts.title" | default .Site.Data.ample.defaults.fonts.title -}}
+{{- .Scratch.SetInMap "fonts" "title" $title -}}
+{{- $main := .Param "fonts.main" | default .Site.Data.ample.defaults.fonts.main -}}
+{{- .Scratch.SetInMap "fonts" "main" $main -}}
+{{- $code := .Param "fonts.code" | default .Site.Data.ample.defaults.fonts.code -}}
+{{- .Scratch.SetInMap "fonts" "code" $code -}}
+{{- $google := (slice $brand $title $main $code) | sort | uniq -}}
+{{- .Scratch.SetInMap "fonts" "google" $google -}}
+{{- /* END FONTS */ -}}
+
+{{- /* BEGIN BRANDING */ -}}
+{{- $logo := .Param "branding.logo" | default .Site.Data.ample.defaults.branding.logo -}}
+{{- .Scratch.SetInMap "branding" "logo" $logo -}}
+{{- $title := default .Site.Title "Ample" -}}
+{{- $title := .Param "branding.title" | default $title -}}
+{{- .Scratch.SetInMap "branding" "title" $title -}}
+{{- $alt := .Param "branding.alt" | default .Site.Data.ample.defaults.branding.alt -}}
+{{- .Scratch.SetInMap "branding" "alt" $alt -}}
+{{- $fill := .Param "branding.fill" | default .Site.Data.ample.defaults.branding.fill -}}
+{{- .Scratch.SetInMap "branding" "fill" $fill -}}
+{{- $accent := .Param "branding.accent" | default .Site.Data.ample.defaults.branding.accent -}}
+{{- .Scratch.SetInMap "branding" "accent" $accent -}}
+{{- /* END BRANDING */ -}}
+

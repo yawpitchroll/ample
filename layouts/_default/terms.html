@@ -1,6 +1,8 @@
-{{ partial "header.html" . }}
-
+{{ define "main" }}
+<section class="main-content">
+<header class="terms-header">
 <h1>{{ .Title }}</h1>
+</header>
 
 <ul class="terms">
   {{ range $key, $value := .Data.Terms }}
@@ -12,5 +14,5 @@
   </li>
   {{ end }}
 </ul>
-
-{{ partial "footer.html" . }}
+</section>
+{{ end }}

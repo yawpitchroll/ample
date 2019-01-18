@@ -1,4 +1,6 @@
 @import "normalize";
+@import "highlight";
+
 
 /* variables used throughout the style sheet */
 $breakpoint: 45rem;
@@ -54,16 +56,22 @@ $curr-size: $font-basis;
     $curr-size: $curr-size * $font-factor;
 }
 
-code {
-    font-size: $font-basis / $font-factor;
-}
-
 main {
     @extend %font-main;
 }
 
+pre {
+    @extend %font-code;
+    font-size: $font-basis / $font-factor;
+
+    padding: $font-basis;
+    overflow-x: auto;
+    line-height: 1.5rem;
+}
+
 code {
     @extend %font-code;
+    font-size: $font-basis / $font-factor;
 }
 
 :root {
@@ -216,11 +224,10 @@ code {
 }
 
 .site-main {
-    padding-top: $header-size + 1;
     padding-right: $font-basis;
     padding-left: $font-basis;
     flex: 1 0 auto;
-    
+
     @media only screen and (min-width: $breakpoint) {
         padding-left: 0;
         padding-right: 0;
@@ -241,13 +248,27 @@ code {
     flex-shrink: 0;
 }
 
+hr {
+    border-style: dashed;
+    color: #ddd
+}
+
 .site-footer {
     flex-shrink: 0;
     text-align: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    @media only screen and (min-width: $breakpoint) {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
 }
 
 .social-items {
     padding: 0;
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: baseline;
@@ -263,12 +284,25 @@ code {
 
 .social-item {
     display: inline-block;
-    padding: 0 $font-basis * 0.50;
+    padding: 0 ($font-basis * 0.50);
     font-size: 1.8rem;
 }
 
+.terms-header,
+.list-header,
 .article-header {
-    padding: $font-basis 0;
+
+    padding-top: $header-size + 1;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.4rem;
+    background-image: linear-gradient(0deg, $branding-accent, lighten($branding-accent, 40%));
+    box-shadow: 0 0.4rem 0.4rem rgba(70, 70, 70, 0.3);
+
+    @media only screen and (min-width: $breakpoint) {
+        padding-top: $header-size + 2;
+    }
+
 }
 
 .article-metadata-items {
@@ -276,27 +310,62 @@ code {
     margin-top: 0.2rem;
     display: flex;
     align-items: baseline;
-    font-size: $font-basis * 0.8;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    font-size: $font-basis * 0.55;
     text-transform: uppercase;
+    color: white;
+
+        @media only screen and (min-width: $breakpoint) {
+        font-size: $font-basis * 0.7;
+    }
+
 }
 
 .article-metadata-item {
     display: inline-block;
-    padding-left: $font-basis * 0.8;
+    padding-right: $font-basis * 0.6;
+    padding-bottom: $font-basis * 0.2;
 }
 
-.article-metadata-item:first-of-type {
-    padding-left: $font-basis * 0.2;
+.article-metadata-item a {
+    color: white;
+}
+
+.article-metadata-item a:hover {
+    text-decoration: underline;
+}
+
+.article-metadata-item i {
+    padding-right: $font-basis * 0.3;
+}
+
+.article-metadata-item:last-of-type {
+    padding-right: 0;
 }
 
 .copyright {
     @extend %font-brand-caps;
-    font-size: .85em
+    font-size: .55em;
+    padding: 0.4rem 0;
+    margin: 0;
+
+    @media only screen and (min-width: $breakpoint) {
+        font-size: .85em;
+    }
+
 }
 
 .title {
+
     font-weight: bold;
+    /*font-size: $curr-size / $font-factor;*/
     margin: 0;
+    color: white;
+
+    @media only screen and (min-width: $breakpoint) {
+        font-size: $curr-size;
+    }
 }
 
 /*
@@ -464,10 +533,75 @@ tr:nth-child(even) {
 
 .post-nav-prev {
     text-align: left;
-    padding-left: $font-basis;
 }
 
 .post-nav-next {
     text-align: right;
-    padding-right: $font-basis;
 }
+
+.highlight {
+}
+
+.highlight .chroma {
+
+}
+
+.lntable {
+}
+
+.lntable tr {
+}
+
+.lntable .lntd:first-of-type {
+    background: desaturate($branding-accent, 40%);
+    color: white;
+}
+
+.lntable .lntd:first-of-type pre {
+    min-width: 2rem;
+    padding-left: 0.6;
+    padding-right: 0;
+    text-align: right;
+    background: none
+}
+
+.lnt {
+}
+
+.terms {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: space-around;
+    padding: 0 2rem;
+}
+
+{{- range $taxon, $taxonomy := .Site.Taxonomies -}}
+{{- $counts := slice -}}
+{{- $taxon := $taxon | singularize | anchorize | urlize -}}
+{{- range $key, $value := $taxonomy -}}
+{{- $count := len $value.Pages -}}
+{{- $counts = $counts | append $count -}}
+{{- end -}}
+{{- $counts := sort (uniq $counts) -}}
+{{- $nums := len $counts -}}
+{{- $low := index $counts 0 -}}
+{{- $high := index $counts (sub $nums 1) }}
+{{- range $count := $counts }}
+{{- if (gt $high $low) -}}
+{{- $norm := div (sub (float $count) $low) (sub $high $low) -}}
+{{- $dnorm := add (mul $norm (sub 4 1)) 1 -}}
+{{- $selector := printf ".%s-%d" $taxon $count -}}
+{{ $selector }} {
+    display: block;
+    padding: 0 0.3rem;
+    font-size: 0.6 * $font-basis * {{ $dnorm }};
+
+    @media only screen and (min-width: $breakpoint) {
+        font-size: $font-basis * {{ $dnorm }};
+    }
+}
+{{- end -}}
+{{- end -}}
+{{- end }}

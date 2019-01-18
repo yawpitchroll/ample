@@ -3,39 +3,33 @@
 <header class="article-header">
     <h1 class="title">{{ .Title }}</h1>
     <ul class="article-metadata-items">
-        {{ with .Params.date }}
+        {{- with .Params.date }}
         <li class="article-metadata-item">
-            <i class="fab fa-calendar-alt"></i><time datetime={{ .Format "2006-01-02" }}>
-                {{ .Format "Jan 02, 2006" }}
-            </time>
+            <i class="fab fa-calendar-alt"></i><time datetime={{ .Format "2006-01-02" }}>{{ .Format "Jan 02, 2006" }}</time>
         </li>
-        {{ end }}
-
-        {{ with .Params.categories }}
-        {{ $sort := sort . }}
-        {{ $links := apply $sort "partial" "post_categories.html" "." }}
-        {{ $clean := apply $links "chomp" "." }}
+        {{- end }}
+        {{- with .Params.categories -}}
+        {{- $sort := sort . -}}
+        {{- $links := apply $sort "partial" "post_categories.html" "." -}}
+        {{- $clean := apply $links "chomp" "." }}
         <li class="article-metadata-item">
-            <i class="fab fa-folder-open"></i> {{ delimit $clean ", " " and " }}
+            <i class="fab fa-folder-open"></i>{{ delimit $clean ", " " & " }}
         </li>
-        {{ end }}
-
-        {{ with .Params.tags }}
-        {{ $sort := sort . }}
-        {{ $links := apply $sort "partial" "post_tags.html" "." }}
-        {{ $clean := apply $links "chomp" "." }}
+        {{- end }}
+        {{- with .Params.tags -}}
+        {{- $sort := sort . -}}
+        {{- $links := apply $sort "partial" "post_tags.html" "." -}}
+        {{- $clean := apply $links "chomp" "." }}
         <li class="article-metadata-item">
-            <i class="far fa-tag"></i> {{ delimit $clean ", " " and " }}
+            <i class="far fa-tag"></i>{{ delimit $clean ", " " & " }}
         </li>
-        {{ end }}
-
+        {{- end }}
         <li class="article-metadata-item">
-            <i class="far fa-file-alt"></i> {{ .WordCount }} words
+            <i class="far fa-file-alt"></i>{{ .WordCount }} words
         </li>
-
-        {{ $mins := cond (eq .ReadingTime 1) "min" "mins" }}
+        {{- $mins := cond (eq .ReadingTime 1) "min" "mins" -}}
         <li class="article-metadata-item">
-            <i class="far fa-clock"></i> {{ .ReadingTime }} {{ $mins }}
+            <i class="far fa-clock"></i>{{ .ReadingTime }} {{ $mins }}
         </li>
     </ul>
 </header>
@@ -52,17 +46,11 @@
 </aside>
 {{ end }}
 
-{{ if and .Site.DisqusShortname (not .Params.disableComments) }}
-<section class="article-comments">
-	<h4 class="comment">Comments</h4>
-	{{ template "_internal/disqus.html" . }}
-<section>
-{{ end }}
 </article>
 {{ end }}
 
-{{ define "footer" }}
-{{ if not .Params.nav_off }}
-{{ partial "post_nav.html" . }}
-{{ end }}
-{{ end }}
+{{- define "footer" -}}
+{{- if not .Params.nav_off -}}
+{{ partial "post_nav.html" . | chomp }}
+{{- end }}
+{{- end }}

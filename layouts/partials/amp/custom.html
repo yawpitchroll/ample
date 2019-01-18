@@ -1,5 +1,4 @@
-{{- $css_options := (dict "outputStyle" "compressed") -}}
-{{- $css_template := resources.Get "sass/style.scss" -}}
-{{- $css_content := $css_template | resources.ExecuteAsTemplate "style.scss" . -}}
-{{- $css_file := $css_content | toCSS $css_options -}}
-<style amp-custom>{{ $css_file.Content | chomp | safeCSS }}</style>
+{{- $options := (dict "outputStyle" "compressed") -}}
+{{- $style := resources.Get "sass/style.scss" | resources.ExecuteAsTemplate "style.scss" . -}}
+{{- $css := $style | toCSS $options -}}
+<style amp-custom>{{ $css.Content | chomp | safeCSS }}</style>

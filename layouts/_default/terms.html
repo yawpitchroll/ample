@@ -1,16 +1,15 @@
 {{ define "main" }}
 <section class="main-content">
 <header class="terms-header">
-<h1>{{ .Title }}</h1>
+<h1 class="title">{{ .Title }}</h1>
 </header>
 
 <ul class="terms">
   {{ range $key, $value := .Data.Terms }}
-  <li>
+  <li class="{{ $.Data.Singular | anchorize | urlize }}-{{ len $value }}">
     <a href="{{ (print "/" $.Data.Plural "/" $key | urlize) | relURL }}">
       {{ $key }}
     </a>
-    ({{ len $value }})
   </li>
   {{ end }}
 </ul>

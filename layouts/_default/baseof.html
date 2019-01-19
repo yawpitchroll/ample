@@ -5,7 +5,7 @@
         <meta charset="utf-8">
         <script async src="https://cdn.ampproject.org/v0.js"></script>
         <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-        <title>{{ block "title" . }}{{ .Param "Title" }}{{ end }}</title>
+        <title>{{ block "title" . }}{{ .Param "Title" }} | {{ (.Scratch.Get "branding").title }}{{ end }}</title>
         {{ partial "head_custom.html" . | chomp }}
         {{- if .Site.GoogleAnalytics -}}
         {{ template "_internal/google_analytics.html" . }}

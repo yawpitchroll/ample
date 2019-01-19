@@ -1,18 +1,25 @@
+{{ define "title" }}
+{{ if not .IsHome }}
+{{ .Title }} | {{ (.Scratch.Get "branding").title }}
+{{ else }}
+Home | {{ (.Scratch.Get "branding").title }}
+{{ end }}
+{{ end }}
+
 {{ define "main" }}
 <section class="main-content">
 <header class="list-header">    
 {{if not .IsHome }}
-	<h1 class="title">{{ .Title }}</h1>
+    <h1 class="title">{{ .Title }}</h1>
 {{ end }}
 </header>
 <section class="list-content">
-	{{ .Content }}
-
+    {{ .Content }}
 <nav>
-<ul>
+<ul class="summaries">
 	{{ $paginator := .Paginate (where .Data.Pages "Type" "!=" "page") }}
-	{{ range $paginator.Pages }} 
-		{{ partial "list-item" . }}
+	{{ range $paginator.Pages }}
+        {{ .Render "summary" }}
 	{{ end }}
 </ul>
 </nav>

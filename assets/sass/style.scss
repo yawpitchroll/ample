@@ -221,6 +221,11 @@ code {
     @media only screen and (min-width: $breakpoint) {
         width: $breakpoint;
     }
+
+    @media only screen and (min-width: $breakpoint + 20) {
+        width: $breakpoint + 20;
+    }
+
 }
 
 .site-main {
@@ -241,7 +246,7 @@ code {
     hyphens: auto;
 }
 
-.article-content {
+.post-content {
 }
 
 .main-footer {
@@ -290,7 +295,7 @@ hr {
 
 .terms-header,
 .list-header,
-.article-header {
+.post-header {
 
     padding-top: $header-size + 1;
     padding-left: 1rem;
@@ -305,13 +310,8 @@ hr {
 
 }
 
-.article-metadata-items {
-    padding: 0;
-    margin-top: 0.2rem;
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+.post-metadata {
+    padding-top: 0.2rem;
     font-size: $font-basis * 0.55;
     text-transform: uppercase;
     color: white;
@@ -319,28 +319,36 @@ hr {
         @media only screen and (min-width: $breakpoint) {
         font-size: $font-basis * 0.7;
     }
+}
+
+.post-metadata a {
+    color: white;
+}
+
+.post-metadata a:hover {
+    text-decoration: underline;
+}
+
+.post-metadata-items {
+    padding: 0;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    justify-content: flex-start;
 
 }
 
-.article-metadata-item {
+.post-metadata-item {
     display: inline-block;
     padding-right: $font-basis * 0.6;
     padding-bottom: $font-basis * 0.2;
 }
 
-.article-metadata-item a {
-    color: white;
-}
-
-.article-metadata-item a:hover {
-    text-decoration: underline;
-}
-
-.article-metadata-item i {
+.post-metadata-item i {
     padding-right: $font-basis * 0.3;
 }
 
-.article-metadata-item:last-of-type {
+.post-metadata-item:last-of-type {
     padding-right: 0;
 }
 
@@ -368,6 +376,108 @@ hr {
     }
 }
 
+.summaries {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: stretch;
+    align-items: stretch;
+    padding: 0.5rem;
+}
+
+.summary {
+    display: block;
+}
+
+.summary hr {
+    width: 60%;
+    padding: 0;
+    margin: 0.4rem auto;
+}
+
+.summary-readmore {
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-align: right;
+    padding: 0.4rem 0;
+
+    @media only screen and (min-width: $breakpoint) {
+        font-size: $font-basis;
+    }
+
+}
+
+.summary:first-of-type hr {
+    display: none;
+}
+
+.summary a {
+    color: $branding-fill;
+}
+
+.summary a:hover {
+    @extend %brand-hover-no-decoration;
+}
+
+.summary-title {
+    font-size: 1.2rem;
+    padding: 0;
+    margin: 0;
+
+    @media only screen and (min-width: $breakpoint) {
+        font-size: 2rem;
+    }
+}
+
+.summary-body {
+    font-size: $font-basis * 0.75;
+    padding: 0 0.2rem;
+    padding-top: 0.2rem;
+    margin: 0;
+
+    @media only screen and (min-width: $breakpoint) {
+        font-size: $font-basis;
+    }
+
+}
+
+.summary-body p {
+    margin: 0;
+}
+
+.summary-metadata {
+    padding-top: 0.2rem;
+    font-size: $font-basis * 0.65;
+    text-transform: uppercase;
+
+   @media only screen and (min-width: $breakpoint) {
+        font-size: $font-basis * 0.85;
+    }
+}
+
+.summary-metadata-items {
+    padding: 0;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
+}
+
+.summary-metadata-item {
+    display: inline-block;
+    padding-right: $font-basis * 0.6;
+    padding-bottom: $font-basis * 0.2;
+}
+
+.summary-metadata-item i {
+    padding-right: $font-basis * 0.3;
+}
+
+.summary-metadata-item:last-of-type {
+    padding-right: 0;
+}
+
 /*
 
 .menu li {
@@ -382,7 +492,7 @@ hr {
     padding: 0px
 }
 
-.article-meta {
+.post-meta {
     padding: 18px
 }
 
@@ -397,7 +507,7 @@ hr {
 }
 
 .menu,
-.article-meta,
+.post-meta,
 .comment,
 .related,
 footer {

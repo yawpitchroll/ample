@@ -8,24 +8,25 @@ Home | {{ (.Scratch.Get "branding").title }}
 
 {{ define "main" }}
 <section class="main-content">
-<header class="list-header">    
-{{if not .IsHome }}
-    <h1 class="title">{{ .Title }}</h1>
-{{ end }}
-</header>
-<section class="list-content">
-    {{ .Content }}
-<nav>
-<ul class="summaries">
-	{{ $paginator := .Paginate (where .Data.Pages "Type" "!=" "page") }}
-	{{ range $paginator.Pages }}
-        {{ .Render "summary" }}
-	{{ end }}
-</ul>
-</nav>
-<footer>
-{{ partial "paginator" . }}
-</footer>
-</section>
+    <header class="list-header">    
+        {{if not .IsHome }}
+        <h1 class="title">{{ .Title }}</h1>
+        {{ end }}
+    </header>
+    <section class="list-content">
+        {{ .Content }}
+        <nav>
+            <ul class="summaries">
+                {{ $paginator := .Paginate (where .Data.Pages "Type" "!=" "page") }}
+                {{ range $paginator.Pages }}
+                {{ .Render "summary" }}
+                {{ end }}
+            </ul>
+        </nav>
+    </section>
 </section>
 {{ end }}
+
+{{- define "footer" -}}
+{{ partial "paginator2.html" . | chomp }}
+{{- end }}

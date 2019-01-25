@@ -4,79 +4,161 @@
 
 /* variables used throughout the style sheet */
 $breakpoint: 45rem;
-$font-basis: 1rem;
 $font-factor: 1.2;
-$header-basis: $font-basis * $font-factor;
+$header-basis: 1rem * $font-factor;
 $header-size: $header-basis * 3;
-$horizontal-pad: $font-basis * 2;
+$horizontal-pad: 2rem;
 $branding-fill: {{ (.Scratch.Get "branding").fill }};
 $branding-accent: {{ (.Scratch.Get "branding").accent }};
 
-/* placeholders for various properties */
-%font-brand {
-    font-family: {{ (.Scratch.Get "fonts").brand }}, monospace;
+$small-screen: 45em;
+$large-screen: 65em;
+$small-font: 0.875em;
+$large-font: 1.325em;
+
+// Fluid type helpers, from Mike Riethmuller 
+// See: https://www.madebymike.com.au/writing/fluid-type-calc-examples/
+// Interpolate the given properties from min-value to max-value fluidly with screen size
+@mixin interpolate($properties, $min-screen, $max-screen, $min-value, $max-value) {
+	& {
+		@each $property in $properties {
+			#{$property}: $min-value;
+		}
+
+		@media screen and (min-width: $min-screen) {
+			@each $property in $properties {
+				#{$property}: calc-interpolation($min-screen, $min-value, $max-screen, $max-value);
+			}
+		}
+
+		@media screen and (min-width: $max-screen) {
+			@each $property in $properties {
+				#{$property}: $max-value;
+			}
+		}
+	}
+}
+
+
+// Calculates the interpolated value between min-value and max-value fluidly with screen size
+@function calc-interpolation($min-screen, $min-value, $max-screen, $max-value) {
+	$a: ($max-value - $min-value) / ($max-screen - $min-screen);
+	$b: $min-value - $a * $min-screen;
+
+	$sign: "+";
+	@if ($b < 0) {
+		$sign: "-";
+		$b: abs($b);
+	}
+	@return calc(#{$a*100}vw #{$sign} #{$b});
+}
+
+@mixin exceeds($breakpoint) {
+    @media screen and (min-width: $breakpoint) {
+        @content
+    }
+}
+
+
+
+/* fonts: use the same system fonts as github */
+%font-main {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+%font-code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 
 %font-brand-caps {
-    @extend %font-brand;
+    @extend %font-code;
     text-transform: uppercase;
 }
 
 %font-title {
-    font-family: {{ (.Scratch.Get "fonts").title }}, sans-serif;
+    @extend %font-main;
 }
-
-%font-main {
-    font-family: {{ (.Scratch.Get "fonts").main }}, sans-serif;
-}
-
-%font-code {
-    font-family: {{ (.Scratch.Get "fonts").code }}, monospace;
-}
-
 
 html {
-    height: 100%;
+    @include interpolate(font-size, $small-screen, $large-screen, $small-font, $large-font);
 }
 
 body {
-    @extend %font-title;
-    background-color: white;
-    color: $branding-fill;
-    font-size: $font-basis;
-    height: 100vh;
+    @extend %font-main;
+    height: 100%;
+    line-height: 1.35rem;
+
 }
 
-$curr-size: $font-basis;
-@for $index from 1 through 6 {
-    h#{7-$index} {
-        @extend %font-title;
-        font-size: $curr-size;
-    }
-    $curr-size: $curr-size * $font-factor;
+h1, h2, h3, h4, h5, h6 {
+    @extend %font-title;
+    line-height: 1.35em;
 }
+
+h1 {
+    font-size: 1.75rem;
+    margin: 0.67rem 0;
+}
+
+h2 {
+    font-size: 1.52rem;
+    margin: 0.58rem 0;
+}
+
+h3 {
+    font-size: 1.32rem;
+    margin: 0.51rem 0;
+}
+
+h4 {
+    font-size: 1.15rem;
+    margin: 0.44rem 0;
+}
+
+h5 {
+    font-size: 1.00rem;
+    margin: 0.38rem 0;
+}
+
+h6 {
+    font-size: 0.87rem;
+    margin: 0.33rem 0;
+}
+
+p {
+    margin: 0.70rem 0;
+}
+
+a {
+    color: $branding-accent;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+        text-decoration-style: dotted;
+    }
+}
+
+
+hr {
+    border-style: dashed;
+    color: #ddd
+}
+
 
 main {
     @extend %font-main;
 }
 
 pre {
-    @extend %font-code;
-    font-size: $font-basis / $font-factor;
-
-    padding: $font-basis;
-    overflow-x: auto;
-    line-height: 1.5rem;
+    font-size: 0.95em;
 }
 
 code {
     @extend %font-code;
-    font-size: $font-basis / $font-factor;
+    font-size: 0.95em;
 }
 
-:root {
-    --accent: $branding-accent
-}
 
 %brand-hover {
     transition: 200ms;
@@ -96,6 +178,7 @@ code {
 
 %header-bar {
     position: fixed;
+    z-index: 1000;
     top: 0;
     left: 0;
     min-height: $header-size;
@@ -104,6 +187,7 @@ code {
     box-shadow: 0 0.2rem 0.02rem rgba(70, 70, 70, 0.3);
     font-size: $header-basis;
 }
+
 
 .navbar {
     @extend %header-bar;
@@ -114,57 +198,63 @@ code {
     justify-content: space-between;
     align-items: center;
 
-    @media only screen and (min-width: $breakpoint) {
+    @include exceeds($small-screen) {
         align-items: baseline;
     }
-}
 
-.navbar-branding {
-    padding-left: $horizontal-pad;
-    flex: 1 0 0;
-    text-align: left;
-}
+    a {
+        color: $branding-fill;
 
-.navbar-branding svg {
-    height: $header-basis;
-    width: auto;
-    vertical-align: middle;
-    padding-bottom: 0.10rem;
-}
-
-.navbar-items {
-    flex: 1 0 0;
-    text-align: right;
-    padding-right: $horizontal-pad;
-    display: none;
-
-    @media only screen and (min-width: $breakpoint) {
-        display: inline-block;
+        &:hover {
+            @extend %brand-hover-masthead;
+        }
     }
-}
 
-.navbar-item {
-    display: inline-block;
-}
-
-.navbar-toggle {
-    padding-right: $horizontal-pad;
-    cursor: pointer;
-    flex: 1 0 0;
-    text-align: right;
-
-    @media only screen and (min-width: $breakpoint) {
+    .branding {
+       padding-left: $horizontal-pad;
+       text-align: left;
+       flex: 1 0 0;
+    
+       svg {
+           height: $header-basis;
+           width: auto;
+           vertical-align: middle;
+           padding-bottom: 0.10rem;
+       }
+    }
+    
+    .items {
+        flex: 1 0 0;
+        padding-right: $horizontal-pad;
         display: none;
+        text-align: right;
+
+        @include exceeds($small-screen) {
+            display: inline-block;
+        }
+
+        .item {
+            display: inline-block;
+        }
     }
-}
 
-.navbar a {
-    color: $branding-fill;
-}
+    .toggle {
+        padding-right: $horizontal-pad;
+        cursor: pointer;
+        flex: 1 0 0;
+        text-align: right;
 
-.navbar-toggle:hover,
-.navbar a:hover {
-    @extend %brand-hover-masthead;
+        display: inline-block;
+
+        @include exceeds($small-screen) {    
+            display: none;
+        }
+
+        &:hover {
+            @extend %brand-hover-masthead;
+        }
+
+    }
 }
 
 .sidebar {
@@ -174,43 +264,48 @@ code {
     background: rgba(255, 255, 255, 0.9);
     text-align: right;
     width: 100%;
+
+    a {
+        color: $branding-fill;
+
+        &:hover {
+            @extend %brand-hover-masthead;
+        }
+    }
+
+    .head {
+        @extend %header-bar;
+        background: rgba(255, 255, 255, 0.6);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .toggle {
+            padding-right: $horizontal-pad;
+            cursor: pointer;
+            flex: 1 0 0;
+            text-align: right;
+            font-size: 1.65rem;
+
+            &:hover {
+               @extend %brand-hover-masthead;
+            }
+        }
+    }
+
+    .items {
+        padding-top: $header-size + 1;
+        padding-right: $horizontal-pad;
+        font-size: 1.65rem;
+
+        .item {
+            display: block
+        }
+
+    }
 }
 
-.sidebar-head {
-    @extend %header-bar;
-    @extend %font-brand;
-    background: rgba(255, 255, 255, 0.6);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 
-.sidebar-toggle {
-    padding-right: $horizontal-pad;
-    cursor: pointer;
-    flex: 1 0 0;
-    text-align: right;
-    font-size: 1.65rem;
-}
-
-.sidebar a {
-    color: $branding-fill;
-}
-
-.sidebar-toggle:hover,
-.sidebar a:hover {
-    @extend %brand-hover-no-decoration;
-}
-
-.sidebar-items {
-    padding-top: $header-size + 1;
-    padding-right: $horizontal-pad;
-    font-size: 1.65rem
-}
-
-.sidebar-item {
-    display: block
-}
 
 .site-content {
     margin: 0 auto;
@@ -218,24 +313,18 @@ code {
     flex-direction: column;
     height: 100vh;
 
-    @media only screen and (min-width: $breakpoint) {
-        width: $breakpoint;
-    }
-
-    @media only screen and (min-width: $breakpoint + 20) {
-        width: $breakpoint + 20;
+    @include exceeds($small-screen) {
+        width: $small-screen;
     }
 
 }
 
 .site-main {
-    padding-right: $font-basis;
-    padding-left: $font-basis;
+    padding: 0 1.25rem;
     flex: 1 0 auto;
 
-    @media only screen and (min-width: $breakpoint) {
-        padding-left: 0;
-        padding-right: 0;
+    @include exceeds($small-screen) {
+        padding: 0 0;;
     }
 }
 
@@ -253,10 +342,7 @@ code {
     flex-shrink: 0;
 }
 
-hr {
-    border-style: dashed;
-    color: #ddd
-}
+
 
 .site-footer {
     flex-shrink: 0;
@@ -264,7 +350,7 @@ hr {
     padding-left: 1rem;
     padding-right: 1rem;
 
-    @media only screen and (min-width: $breakpoint) {
+    @include exceeds($small-screen) {
         padding-left: 0;
         padding-right: 0;
     }
@@ -289,7 +375,7 @@ hr {
 
 .social-item {
     display: inline-block;
-    padding: 0 ($font-basis * 0.50);
+    padding: 0 0.50rem;
     font-size: 1.8rem;
 }
 
@@ -300,11 +386,12 @@ hr {
     padding-top: $header-size + 1;
     padding-left: 1rem;
     padding-right: 1rem;
-    border-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
+    border-bottom-left-radius: 0.4rem;
     background-image: linear-gradient(0deg, $branding-accent, lighten($branding-accent, 40%));
     box-shadow: 0 0.4rem 0.4rem rgba(70, 70, 70, 0.3);
 
-    @media only screen and (min-width: $breakpoint) {
+    @include exceeds($small-screen) {
         padding-top: $header-size + 2;
     }
 
@@ -312,12 +399,12 @@ hr {
 
 .post-metadata {
     padding-top: 0.2rem;
-    font-size: $font-basis * 0.55;
+    font-size: 0.70em;
     text-transform: uppercase;
     color: white;
 
-        @media only screen and (min-width: $breakpoint) {
-        font-size: $font-basis * 0.7;
+    @include exceeds($small-screen) {
+        //font-size: 0.7rem;
     }
 }
 
@@ -332,20 +419,26 @@ hr {
 .post-metadata-items {
     padding: 0;
     display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
+    flex-flow: column wrap;
     justify-content: flex-start;
+    align-items: baseline;
+    line-height: 1rem;
+
+    @include exceeds($small-screen) {
+        flex-direction: row;
+    }
+
 
 }
 
 .post-metadata-item {
     display: inline-block;
-    padding-right: $font-basis * 0.6;
-    padding-bottom: $font-basis * 0.2;
+    padding-right: 0.6rem;
+    padding-bottom: 0.2rem;
 }
 
 .post-metadata-item i {
-    padding-right: $font-basis * 0.3;
+    padding-right: 0.5rem;
 }
 
 .post-metadata-item:last-of-type {
@@ -358,21 +451,19 @@ hr {
     padding: 0.4rem 0;
     margin: 0;
 
-    @media only screen and (min-width: $breakpoint) {
+    @include exceeds($small-screen) {
         font-size: .85em;
     }
 
 }
 
 .title {
-
-    font-weight: bold;
-    /*font-size: $curr-size / $font-factor;*/
+    text-transform: uppercase;
+    hyphens: none;
     margin: 0;
     color: white;
 
-    @media only screen and (min-width: $breakpoint) {
-        font-size: $curr-size;
+    @include exceeds($small-screen) {
     }
 }
 
@@ -401,8 +492,8 @@ hr {
     text-align: right;
     padding: 0.4rem 0;
 
-    @media only screen and (min-width: $breakpoint) {
-        font-size: $font-basis;
+    @include exceeds($small-screen) {
+        font-size: 1rem;
     }
 
 }
@@ -424,19 +515,19 @@ hr {
     padding: 0;
     margin: 0;
 
-    @media only screen and (min-width: $breakpoint) {
+    @include exceeds($small-screen) {
         font-size: 2rem;
     }
 }
 
 .summary-body {
-    font-size: $font-basis * 0.75;
+    font-size: 0.75rem;
     padding: 0 0.2rem;
     padding-top: 0.2rem;
     margin: 0;
 
-    @media only screen and (min-width: $breakpoint) {
-        font-size: $font-basis;
+    @include exceeds($small-screen) {
+        font-size: 1rem;
     }
 
 }
@@ -447,11 +538,11 @@ hr {
 
 .summary-metadata {
     padding-top: 0.2rem;
-    font-size: $font-basis * 0.65;
+    font-size: 0.65rem;
     text-transform: uppercase;
 
-   @media only screen and (min-width: $breakpoint) {
-        font-size: $font-basis * 0.85;
+    @include exceeds($small-screen) {
+        font-size: 0.85rem;
     }
 }
 
@@ -466,163 +557,212 @@ hr {
 
 .summary-metadata-item {
     display: inline-block;
-    padding-right: $font-basis * 0.6;
-    padding-bottom: $font-basis * 0.2;
+    padding-right: 0.6rem;
+    padding-bottom: 0.2rem;
 }
 
 .summary-metadata-item i {
-    padding-right: $font-basis * 0.3;
+    padding-right: 0.3rem;
 }
 
 .summary-metadata-item:last-of-type {
     padding-right: 0;
 }
 
-/*
 
-.menu li {
-    display: inline-block
+
+
+.post-content ol {
+    list-style: none;
+    counter-reset: ol-counter;
+    padding: 0;
+    list-style-position: inside;
 }
 
-.menu a {
-    padding: 5px
+.post-content ol li {
+    counter-increment: ol-counter;
+    padding-left: 1rem;
+
+    p:first-of-type {
+        display: inline;
+    }
 }
 
-.menu {
-    padding: 0px
-}
-
-.post-meta {
-    padding: 18px
-}
-
-.title {
+.post-content ol li:before {
+    content: counter(ol-counter, decimal-leading-zero) ". ";
+    color: $branding-accent;
     font-weight: bold;
-    font-size: 2.25rem;
-    line-height: 1em
 }
 
-.meta {
-    margin: 2px
+.post-content ul:not(.task-list) {
+    list-style: none;
+    padding: 0;
 }
 
-.menu,
-.post-meta,
-.comment,
-.related,
-footer {
-    text-align: center
+.post-content ul:not(.task-list) li {
+    display: block;
+    padding-left: 1rem;
+
+    p:first-of-type {
+        display: inline;
+    }
+
 }
 
-hr {
-    border-style: dashed;
-    color: #ddd
+.post-content ul:not(.task-list) li:before {
+    font-weight: bold;
+    content: "🠶";
+    color: $branding-accent;
+    padding-right: 0.7rem;
 }
 
-.social li {
-    font-size: 1.8rem;
-    letter-spacing: -0.25rem
+.post-content dl {
+    padding: 0;
 }
 
-a:link,
-a:visited,
-a:hover {
-    color: var(--accent)
-}
-.menu a,
-.social a,
-footer a,
-
-*/
-a.icon:hover,
-a:link,
-a:visited {
-    text-decoration: none;
+.post-content dl dt {
+    font-weight: bold;
+    padding-left: 1rem;
 }
 
-a:hover {
-    text-decoration: underline
+.post-content dl dd {
+    display: block;
+    padding: 0;
 }
+
+.post-content dl dd:before {
+    font-weight: bold;
+    content: "🠶";
+    color: $branding-accent;
+    padding-right: 0.7rem;
+}
+
+.post-content blockquote {
+    font-size: 0.9rem;
+    line-height: 1.1rem;
+    border-left: 5px solid $branding-accent;
+
+    padding: 0 1rem;
+    margin: 0.4rem 0;
+}
+
+.post-content blockquote blockquote {
+    border-left: 5px solid #ddd;
+}
+
 /*
-
-pre {
-    border: 1px solid #ddd;
-    padding: 1em;
-    overflow-x: auto
-}
-
-pre,
-code,
-blockquote {
-    background: #f7f7f7
-}
-
-pre code {
-    background: none
-}
-
-blockquote {
-    border-left: 5px solid #ccc;
-    padding: 3px 1em 3px
-}
-
-img,
-iframe,
-video {
-    max-width: 100%
-}
-
-main {
-    hyphens: auto
-}
-
-.copyright {
-    @extend %font-brand-caps;
-    font-size: .85em
-}
-
-.pages {
-    padding: 15px 0;
-    text-align: center
-}
-
-.pages-icon {
-    padding: 0 15px
-}
-
-table {
+.post-content table {
     margin: auto;
     border-top: 1px solid #666;
     border-bottom: 1px solid #666
 }
 
-table thead th {
+.post-content table thead th {
     border-bottom: 1px solid #ddd
 }
 
-th,
-td {
+.post-content th,
+.post-content td {
     padding: 5px
 }
 
-thead,
-tfoot,
-tr:nth-child(even) {
+.post-content thead,
+.post-content tfoot,
+.post-content tr:nth-child(even) {
     background: #eee
 }
-
 */
+
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+}
+
+.bullets {
+    @extend %font-brand-caps;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #ddd;
+
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+
+.bullet-item {
+    display: block;
+    padding: 0 2rem;
+}
+
+.bullet-metadata-items {
+
+    padding: 0;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.bullet-metadata-item {
+    display: inline-block;
+}
+
+.bullet-metadata-title {
+    flex: 666;
+}
+
+
+.pagination {
+    @extend %font-brand-caps;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    display: none;
+    justify-content: space-between;
+    color: #ddd;
+    padding: 0;
+    margin-bottom: 0;
+    text-align: center;
+
+    @include exceeds($small-screen) {
+        display: flex;
+    }
+}
+
+.pagination a {
+    color: $branding-fill;
+    font-weight: bold;
+    text-decoration: none
+}
+
+.pagination a:hover {
+    @extend %brand-hover-no-decoration;
+}
+
+.page-item {
+    display: inline-block;
+    flex: 1 0 1.5rem;
+}
+
+.page-item-spacer {
+    display: inline-block;
+    flex: 666;
+}
 
 .post-nav {
     @extend %font-brand-caps;
-    font-size: $font-basis * 0.9;
+    font-size: 0.9rem;
     text-transform: uppercase;
-    margin-top: $font-basis;
+    margin-top: 1rem;
     display: none;
     justify-content: space-between;
     color: #ddd;
 
-    @media only screen and (min-width: $breakpoint) {
+    @include exceeds($small-screen) {
         display: flex;
     }
 }
@@ -649,17 +789,79 @@ tr:nth-child(even) {
     text-align: right;
 }
 
+/*
+<div class="highlight">
+    <div class="chroma">
+        <table class="lntable">
+            <tr>
+                <td class="lntd">
+                    <pre class="chroma">
+                        <span class="lnt">1</span>
+                    </pre>
+                </td>
+                <td class="lntd">
+                    <pre class="chroma">return shell_exec(&#34;echo $input | $markdown_script&#34;);</pre>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+*/
+
+.highlight {
+    margin: 1rem 0;
+    width: 100%;
+    border: 1px solid #ddd;
+    
+    > .chroma {
+
+
+        > .lntable {
+            width: auto;
+
+            tr {
+                .lntd {
+                    padding: 0.2rem 0;
+
+                    &:first-child {
+                        text-align: right;
+                    }
+
+                    &:last-child {
+                        width: 100%;
+
+                    }
+                }
+
+                .lnt {
+                    padding-left: 0.8rem;
+                    padding-right: 0.8rem;
+                }
+
+            }
+
+        }
+
+    }
+}
+
+/*
+pre.chroma {
+    border: 1px solid lime;
+}
+
 .highlight {
 }
 
 .highlight .chroma {
-
 }
 
-.lntable {
+
+.lntable { 
 }
 
 .lntable tr {
+
 }
 
 .lntable .lntd:first-of-type {
@@ -669,14 +871,15 @@ tr:nth-child(even) {
 
 .lntable .lntd:first-of-type pre {
     min-width: 2rem;
-    padding-left: 0.6;
-    padding-right: 0;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
     text-align: right;
-    background: none
+    background: none;
 }
 
 .lnt {
 }
+*/
 
 .terms {
     display: flex;
@@ -706,12 +909,116 @@ tr:nth-child(even) {
 {{ $selector }} {
     display: block;
     padding: 0 0.3rem;
-    font-size: 0.6 * $font-basis * {{ $dnorm }};
+    font-size: 0.6rem * {{ $dnorm }};
 
-    @media only screen and (min-width: $breakpoint) {
-        font-size: $font-basis * {{ $dnorm }};
+    @include exceeds($small-screen) {
+        font-size: 1rem * {{ $dnorm }};
     }
 }
 {{- end -}}
 {{- end -}}
 {{- end }}
+
+
+.footnote-ref {
+    font-weight: bold;
+    padding-left: 0.1rem;
+
+    > a {
+        &:before { 
+            content: '[' 
+        }
+
+        &:after { 
+            content: ']' 
+        }
+    }
+}
+
+.footnote-return {
+    font-weight: bold;
+}
+
+.task-list {
+    list-style: none;
+    font-size: 0.9rem;
+    line-height: 1.1rem;
+    border-left: 5px solid $branding-accent;
+
+    padding: 0 1rem;
+    margin: 0.4rem 0;
+
+    label {
+        font-weight: bold;
+    }
+
+}
+
+sup, sub {
+    vertical-align: baseline;
+    position: relative;
+    top: -0.4em;
+    padding: 0 0.1rem;
+}
+
+sub {
+    top: 0.4em;
+}
+
+
+
+$gl-ms         : "screen and (max-width: 23.5em)"; // up to 360px
+$gl-xs         : "screen and (max-width: 35.5em)"; // up to 568px
+$gl-sm         : "screen and (max-width: 48em)";   // max 768px
+$gl-md         : "screen and (max-width: 64em)";   // max 1024px
+$gl-lg         : "screen and (max-width: 80em)";   // max 1280px
+
+.table {
+    overflow-x: auto;
+}
+
+table:not(.lntable) {
+    margin: 1rem auto;
+    display: table;      
+    vertical-align: top;
+    max-width: 100%;
+    white-space: nowrap;
+    border-collapse: collapse;
+    border-spacing: 0;
+
+    thead {
+        background: $branding-accent;
+    }
+
+    th {
+        font-size: 0.7rem;
+        text-align: left;
+        text-transform: uppercase;
+        padding: 0.5rem 1rem;
+        border: 1px solid black;
+        background: $branding-accent;
+        color: white;
+    }
+
+    tfoot {
+        background: #ddd;
+    }
+
+    tr {
+        &:nth-child(even) {
+            background: #ddd;
+        }
+
+        &:hover {
+            background: tomato;
+        }
+    }
+   
+
+    td {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+     }
+
+}
+

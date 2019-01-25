@@ -1,0 +1,22 @@
+<li class="bullet-item">
+	<a href="{{ .URL }}">
+        <ul class="bullet-metadata-items">
+            <li class="bullet-metadata-item bullet-metadata-title">
+                {{ .Title | truncate 40 }}
+            </li>
+            {{- with .Params.date }}
+            <li class="bullet-metadata-item">
+                <i class="fab fa-calendar-alt"></i>{{ partial "util/date.html" . | chomp }}
+            </li>
+            {{- end }}
+            {{- $icon := cond (gt .WordCount 2000) "fas fa-book" "far fa-file-alt" -}}
+            <li class="bullet-metadata-item">
+                <i class="{{ $icon }}"></i>{{ .WordCount }} words
+            </li>
+            {{- $mins := cond (eq .ReadingTime 1) "min" "mins" -}}
+            <li class="bullet-metadata-item">
+                <i class="far fa-clock"></i>{{ .ReadingTime }} {{ $mins }}
+            </li>
+        </ul>
+    </a>
+</li>

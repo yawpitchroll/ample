@@ -12,10 +12,12 @@
 <!-- related posts with the same tags -->
 {{ with .Site.RegularPages.Related . | first 5 }}
 <aside class="post-related">
-	<h4 class="related">Related Posts</h4>
-	{{ range . }}
-		{{ partial "list-item" . }}
-	{{ end }}
+	<h1 class="related">Related Posts</h1>
+    <ul class="bullets">
+    	{{ range . }}
+	    	{{ .Render "bullet" }}
+    	{{ end }}
+    </ul>
 </aside>
 {{ end }}
 
@@ -24,6 +26,6 @@
 
 {{- define "footer" -}}
 {{- if not .Params.nav_off -}}
-{{ partial "post_nav.html" . | chomp }}
+{{ partial "post/navigation.html" . | chomp }}
 {{- end }}
 {{- end }}

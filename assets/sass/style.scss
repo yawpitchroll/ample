@@ -3,7 +3,6 @@
 
 
 /* variables used throughout the style sheet */
-$breakpoint: 45rem;
 $font-factor: 1.2;
 $header-basis: 1rem * $font-factor;
 $header-size: $header-basis * 3;
@@ -11,39 +10,38 @@ $horizontal-pad: 2rem;
 $branding-fill: {{ (.Scratch.Get "branding").fill }};
 $branding-accent: {{ (.Scratch.Get "branding").accent }};
 
-$small-screen: 45em;
-$large-screen: 65em;
-$small-font: 0.875em;
-$large-font: 1.325em;
+$small-font: 0.875em;   // 14px
+$large-font: 1.375em;   // 22px
 
-// Fluid type helpers, from Mike Riethmuller 
+// Fluid interpolation helpers via Mike Riethmuller - modified with defaults
 // See: https://www.madebymike.com.au/writing/fluid-type-calc-examples/
 // Interpolate the given properties from min-value to max-value fluidly with screen size
-@mixin interpolate($properties, $min-screen, $max-screen, $min-value, $max-value) {
-	& {
-		@each $property in $properties {
-			#{$property}: $min-value;
+$small-screen: 20em !default; // defaults to 320px @ 16px base font size
+$large-screen: 90em !default; // defaults to 1440px @ 16px base font size
+@mixin interpolate($properties_map, $start: $small-screen, $end: $large-screen) {
+    & {
+        @each $property, $values in $properties_map {
+			#{$property}: nth($values, 1);
 		}
 
-		@media screen and (min-width: $min-screen) {
-			@each $property in $properties {
-				#{$property}: calc-interpolation($min-screen, $min-value, $max-screen, $max-value);
+		@media screen and (min-width: $start) {
+			@each $property, $values in $properties_map {
+				#{$property}: calc-interpolation($start, nth($values, 1), $end, nth($values, 2));
 			}
 		}
 
-		@media screen and (min-width: $max-screen) {
-			@each $property in $properties {
-				#{$property}: $max-value;
+		@media screen and (min-width: $end) {
+            @each $property, $values in $properties_map {
+				#{$property}: nth($values, 2);
 			}
 		}
 	}
 }
 
-
-// Calculates the interpolated value between min-value and max-value fluidly with screen size
-@function calc-interpolation($min-screen, $min-value, $max-screen, $max-value) {
-	$a: ($max-value - $min-value) / ($max-screen - $min-screen);
-	$b: $min-value - $a * $min-screen;
+// Calculates the interpolated value between v1 and v2 fluidly with screen size
+@function calc-interpolation($start, $v1, $end, $v2) {
+	$a: ($v2 - $v1) / ($end - $start);
+	$b: $v1 - $a * $start;
 
 	$sign: "+";
 	@if ($b < 0) {
@@ -53,19 +51,36 @@ $large-font: 1.325em;
 	@return calc(#{$a*100}vw #{$sign} #{$b});
 }
 
+// Helper to toggle items at a specified breakpoint
 @mixin exceeds($breakpoint) {
     @media screen and (min-width: $breakpoint) {
         @content
     }
 }
 
-
-
-/* fonts: use the same system fonts as github */
-%font-main {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+// Helper to toggle items at the navbar / sidebar breakpoint
+$navbar-breakpoint: 45em !default; // defaults to 720px @ 16px base font size
+@mixin toggle-navbar {
+    @media screen and (min-width: $navbar-breakpoint) {
+        @content
+    }
 }
 
+
+// Body Fonts: use the same system fonts as github
+%font-main {
+    font-family: -apple-system, 
+                 BlinkMacSystemFont, 
+                 "Segoe UI", 
+                 Helvetica, 
+                 Arial, 
+                 sans-serif, 
+                 "Apple Color Emoji", 
+                 "Segoe UI Emoji", 
+                 "Segoe UI Symbol";
+}
+
+// Code Blocks: use the same system fonts as github
 %font-code {
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
@@ -77,92 +92,122 @@ $large-font: 1.325em;
 
 %font-title {
     @extend %font-main;
-}
-
-html {
-    @include interpolate(font-size, $small-screen, $large-screen, $small-font, $large-font);
+    font-family: "Proxima Nova";
+    font-weight: bold;
 }
 
 body {
     @extend %font-main;
+	@include interpolate((
+	    font-size: ( $small-font, $large-font ),
+	    line-height: ( 1.6em, 1.4em ),
+    ));
     height: 100%;
-    line-height: 1.35rem;
-
 }
 
 h1, h2, h3, h4, h5, h6 {
     @extend %font-title;
-    line-height: 1.35em;
 }
 
 h1 {
-    font-size: 1.75rem;
-    margin: 0.67rem 0;
+    @include interpolate((
+    	font-size: ( 2.43em, 2.42em ),
+    	line-height: ( 1.18em, 1.14em ),
+        padding-top: ( 0.235em, 0.238em ),
+        margin-bottom: ( 0.353em, 0.333em ),
+    ));
 }
 
 h2 {
-    font-size: 1.52rem;
-    margin: 0.58rem 0;
+    @include interpolate((
+    	font-size: ( 1.93em, 1.96em ),
+    	line-height: ( 1.48em, 1.41em ),
+        padding-top: ( 0.407em, 0.373em ),
+        margin-bottom: ( 0.333em, 0.333em ),
+    ));
 }
 
 h3 {
-    font-size: 1.32rem;
-    margin: 0.51rem 0;
+    @include interpolate((
+    	font-size: ( 1.57em, 1.58em ),
+    	line-height: ( 1.82em, 1.76em ),
+        padding-top: ( 0.591em, 0.537em ),
+        margin-bottom: ( 0.318em, 0.341em ),
+    ));
 }
 
 h4 {
-    font-size: 1.15rem;
-    margin: 0.44rem 0;
+    @include interpolate((
+    	font-size: ( 1.29em, 1.27em ),
+    	line-height: ( 1.11em, 1.09em ),
+        padding-top: ( 0.222em, 0.212em ),
+        margin-bottom: ( 0.889em, 0.879em ),
+    ));
 }
 
-h5 {
-    font-size: 1.00rem;
-    margin: 0.38rem 0;
+h5,
+h6,
+p {
+    @include interpolate((
+    	line-height: ( 1.43em, 1.38em ),
+        padding-top: ( 0.357em, 0.346em ),
+        margin-bottom: ( 1.07em, 1.04em ),
+    ));
+	font-size: 1.00em;
 }
 
 h6 {
-    font-size: 0.87rem;
-    margin: 0.33rem 0;
+    font-size: 0.8em;
 }
 
 p {
-    margin: 0.70rem 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
 a {
+    transition: 200ms;
+    transition-timing-function: ease-in-out;
+
     color: $branding-accent;
     text-decoration: none;
 
     &:hover {
+        color: lighten($branding-accent, 20%);
         text-decoration: underline;
         text-decoration-style: dotted;
     }
 }
-
 
 hr {
     border-style: dashed;
     color: #ddd
 }
 
-
-main {
-    @extend %font-main;
-}
-
-pre {
+pre,
+code {
     font-size: 0.95em;
 }
 
+pre:not(.chroma) {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+kbd,
 code {
     @extend %font-code;
-    font-size: 0.95em;
 }
+
+kbd {
+    font-weight: bold;
+}
+
+
 
 
 %brand-hover {
-    transition: 200ms;
-    transition-timing-function: ease-in-out;
     color: $branding-accent;
 }
 
@@ -178,7 +223,7 @@ code {
 
 %header-bar {
     position: fixed;
-    z-index: 1000;
+    z-index: 10000;
     top: 0;
     left: 0;
     min-height: $header-size;
@@ -198,7 +243,7 @@ code {
     justify-content: space-between;
     align-items: center;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         align-items: baseline;
     }
 
@@ -229,7 +274,7 @@ code {
         display: none;
         text-align: right;
 
-        @include exceeds($small-screen) {
+        @include toggle-navbar {
             display: inline-block;
         }
 
@@ -246,7 +291,7 @@ code {
 
         display: inline-block;
 
-        @include exceeds($small-screen) {    
+        @include toggle-navbar {    
             display: none;
         }
 
@@ -313,8 +358,8 @@ code {
     flex-direction: column;
     height: 100vh;
 
-    @include exceeds($small-screen) {
-        width: $small-screen;
+    @include toggle-navbar {
+        width: 45rem;
     }
 
 }
@@ -323,7 +368,7 @@ code {
     padding: 0 1.25rem;
     flex: 1 0 auto;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         padding: 0 0;;
     }
 }
@@ -332,7 +377,6 @@ code {
     display: flex;
     flex-direction: column;
     flex: 1 0 auto;
-    hyphens: auto;
 }
 
 .post-content {
@@ -350,7 +394,7 @@ code {
     padding-left: 1rem;
     padding-right: 1rem;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         padding-left: 0;
         padding-right: 0;
     }
@@ -391,7 +435,7 @@ code {
     background-image: linear-gradient(0deg, $branding-accent, lighten($branding-accent, 40%));
     box-shadow: 0 0.4rem 0.4rem rgba(70, 70, 70, 0.3);
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         padding-top: $header-size + 2;
     }
 
@@ -403,7 +447,7 @@ code {
     text-transform: uppercase;
     color: white;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         //font-size: 0.7rem;
     }
 }
@@ -424,7 +468,7 @@ code {
     align-items: baseline;
     line-height: 1rem;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         flex-direction: row;
     }
 
@@ -451,19 +495,17 @@ code {
     padding: 0.4rem 0;
     margin: 0;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         font-size: .85em;
     }
 
 }
 
 .title {
-    text-transform: uppercase;
-    hyphens: none;
     margin: 0;
     color: white;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
     }
 }
 
@@ -492,7 +534,7 @@ code {
     text-align: right;
     padding: 0.4rem 0;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         font-size: 1rem;
     }
 
@@ -515,7 +557,7 @@ code {
     padding: 0;
     margin: 0;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         font-size: 2rem;
     }
 }
@@ -526,7 +568,7 @@ code {
     padding-top: 0.2rem;
     margin: 0;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         font-size: 1rem;
     }
 
@@ -541,7 +583,7 @@ code {
     font-size: 0.65rem;
     text-transform: uppercase;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         font-size: 0.85rem;
     }
 }
@@ -577,23 +619,45 @@ code {
     counter-reset: ol-counter;
     padding: 0;
     list-style-position: inside;
-}
 
-.post-content ol li {
-    counter-increment: ol-counter;
-    padding-left: 1rem;
+    > li {
+        counter-increment: ol-counter;
+        padding-left: 1rem;
 
-    p:first-of-type {
-        display: inline;
+        p:first-of-type {
+            display: inline;
+        }
+
+        &:before {
+            margin-right: 0.2em;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        &:not([id^="fn:"]):before {
+            content: counters(ol-counter, ".") ". ";
+        }
+
+        &[id^="fn:"]:before {
+            content: counter(ol-counter) ". ";
+        }
     }
 }
 
-.post-content ol li:before {
-    content: counter(ol-counter, decimal-leading-zero) ". ";
-    color: $branding-accent;
-    font-weight: bold;
+.post-content ul:not(.task-list) {
+    padding: 0;
+    list-style-position: inside;
+
+    > li {
+        padding-left: 1rem;
+
+        p:first-of-type {
+            display: inline;
+        }
+    }
 }
 
+/*
 .post-content ul:not(.task-list) {
     list-style: none;
     padding: 0;
@@ -615,7 +679,12 @@ code {
     color: $branding-accent;
     padding-right: 0.7rem;
 }
+/*
 
+
+
+
+/*
 .post-content dl {
     padding: 0;
 }
@@ -636,7 +705,171 @@ code {
     color: $branding-accent;
     padding-right: 0.7rem;
 }
+*/
 
+dl {
+    margin: 0 1rem;
+
+    dt {
+        margin-top: 0.8em;
+        font-size: 1.2em;
+        font-weight: 400;
+        color: $branding-accent;
+        counter-reset: definition-counter;
+    }
+
+    dd {
+        margin: 0;
+        font-size: 0.9em;
+        font-weight: 200;
+
+        &:before {
+            content: counter(definition-counter) ". ";
+            counter-increment: definition-counter;
+            margin-right: 0.8em;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+    }
+}
+
+
+
+.task-list { 
+    list-style: none;
+
+    padding: 0 1rem;
+    margin: 0.4rem 0;
+    padding: 0 1rem;
+
+    li {
+        vertical-align: middle;
+        padding: 0.5rem;
+        border: 1px solid #eee;
+        border-left: 0.3em double #ddd;
+        border-right: 0.3em double #ddd;
+
+    }
+
+    label {
+        font-weight: 500;
+        margin: 0;
+        display: flex;
+        align-items: center;
+    }
+
+
+    & input[type="checkbox"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-color: #fafafa;
+        border: 1px solid #cacece;
+        border-radius: 0.1rem;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
+        padding: 0.8em;
+        margin-right: 1em;
+        //display: inline-block;
+        position: relative;
+
+        &:checked {
+            background-color: #e9ecee;
+            border: 1px solid #adb8c0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1);
+            color: #99a1a7;
+
+            &:after {
+                content: '\2714';
+                font-size: 3em;
+                position: absolute;
+                top: 0.1em;
+                left: 0.4em;
+                transform: translate(-50%, -50%);
+                color: $branding-accent;
+            }
+        } 
+    }
+}
+
+
+
+q {
+    quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+abbr[title],
+abbr {
+    text-decoration: underline dotted $branding-accent;
+}
+
+mark {
+    background: transparent;
+    text-decoration: underline wavy $branding-accent;
+}
+
+blockquote {
+    margin: 0 1rem;
+    padding: 0 0;
+    position: relative;
+}
+
+blockquote p {
+    font-size: 1.2em;
+    font-weight: 200;
+}
+
+blockquote:before {
+  position: absolute;
+  font-family: serif;
+  top: 0.35em;
+  left: 0.3em;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  content:"\201C";
+  font-size: 7em;
+  color: rgba($branding-accent, 0.2);   
+}
+
+blockquote blockquote {
+    font-size: 0.9em;
+
+    &:before {
+        color: rgba(#ddd, 0.4);
+    }
+}
+
+blockquote > cite {
+    position: absolute;
+    bottom: -1.8em;
+    right: 1.8rem;
+    font-weight: 400;
+
+    &:before {
+        content: "\2014";
+        margin-right: 0.2em;
+    }
+}
+
+/*
+blockquote p:first-child:before,
+blockquote p:last-child:after {
+    position: absolute;
+    display: inline;
+}
+
+blockquote p:first-child:before {
+    left: 0;
+    top: 5rem;
+}
+
+blockquote p:last-child:after {
+    right: 0;
+    bottom: 0;
+}
+*/
+
+
+/*
 .post-content blockquote {
     font-size: 0.9rem;
     line-height: 1.1rem;
@@ -649,6 +882,7 @@ code {
 .post-content blockquote blockquote {
     border-left: 5px solid #ddd;
 }
+*/
 
 /*
 .post-content table {
@@ -728,7 +962,7 @@ code {
     margin-bottom: 0;
     text-align: center;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         display: flex;
     }
 }
@@ -762,7 +996,7 @@ code {
     justify-content: space-between;
     color: #ddd;
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         display: flex;
     }
 }
@@ -811,37 +1045,48 @@ code {
 .highlight {
     margin: 1rem 0;
     width: 100%;
-    border: 1px solid #ddd;
-    
-    > .chroma {
 
+    > pre.chroma :not(code) {
+    }
 
-        > .lntable {
-            width: auto;
+    > pre.chroma {
+        margin: 0;
+        width: 100%;
+        overflow-x: auto;
 
-            tr {
-                .lntd {
-                    padding: 0.2rem 0;
+        border: 1px solid #ddd;    
 
-                    &:first-child {
-                        text-align: right;
-                    }
+        > code {
+            display: block;
+            padding: 0.8rem;
+        }
+    }
 
-                    &:last-child {
-                        width: 100%;
+    > div.chroma {
+        border: 1px solid #ddd;
+    }
 
-                    }
+    > div.chroma .lntable {
+        width: auto;
+
+        tr {
+            .lntd {
+                padding: 0.2rem 0;
+
+                &:first-child {
+                    text-align: right;
                 }
 
-                .lnt {
-                    padding-left: 0.8rem;
-                    padding-right: 0.8rem;
+                &:last-child {
+                    width: 100%;
                 }
-
             }
 
+            .lnt {
+                padding-left: 0.8rem;
+                padding-right: 0.8rem;
+            }
         }
-
     }
 }
 
@@ -911,7 +1156,7 @@ pre.chroma {
     padding: 0 0.3rem;
     font-size: 0.6rem * {{ $dnorm }};
 
-    @include exceeds($small-screen) {
+    @include toggle-navbar {
         font-size: 1rem * {{ $dnorm }};
     }
 }
@@ -939,20 +1184,7 @@ pre.chroma {
     font-weight: bold;
 }
 
-.task-list {
-    list-style: none;
-    font-size: 0.9rem;
-    line-height: 1.1rem;
-    border-left: 5px solid $branding-accent;
 
-    padding: 0 1rem;
-    margin: 0.4rem 0;
-
-    label {
-        font-weight: bold;
-    }
-
-}
 
 sup, sub {
     vertical-align: baseline;
@@ -978,25 +1210,23 @@ $gl-lg         : "screen and (max-width: 80em)";   // max 1280px
 }
 
 table:not(.lntable) {
+    font-size: 0.8em;
     margin: 1rem auto;
     display: table;      
     vertical-align: top;
-    max-width: 100%;
+    width: auto;
     white-space: nowrap;
     border-collapse: collapse;
     border-spacing: 0;
 
-    thead {
-        background: $branding-accent;
+    thead, th {
+        background: desaturate($branding-accent, 40%);
     }
 
     th {
-        font-size: 0.7rem;
         text-align: left;
         text-transform: uppercase;
-        padding: 0.5rem 1rem;
         border: 1px solid black;
-        background: $branding-accent;
         color: white;
     }
 
@@ -1006,19 +1236,31 @@ table:not(.lntable) {
 
     tr {
         &:nth-child(even) {
-            background: #ddd;
+            background: #eee;
         }
 
         &:hover {
-            background: tomato;
+            background: desaturate(lighten($branding-accent, 40%), 60%);
         }
     }
    
 
     td {
-        padding: 0.5rem 1rem;
         border: 1px solid #ddd;
-     }
+    }
 
+    th, td {
+        @include interpolate((
+            padding-left: (0.5em, 1em),
+            padding-right: (0.5em, 1em),
+        ));
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+
+        &:last-of-type {
+            width: 100%;
+        }
+
+    }
 }
 

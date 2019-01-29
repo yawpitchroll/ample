@@ -1,18 +1,22 @@
+// CROSS-BROWSER NORMALIZE
 @import "normalize";
-@import "highlight";
 
 
+// INJECT CODE HIGHLIGHTING
+// TODO: Figure out a way to disable this if pigmentsUseClasses is disabled
+@import "{{ .Site.Params.Ample.syntaxStyle | default "light" }}";
+
+
+// COMMON VARIABLES & HUGO CONFIGURATION
 /* variables used throughout the style sheet */
-$font-factor: 1.2;
-$header-basis: 1rem * $font-factor;
-$header-size: $header-basis * 3;
-$horizontal-pad: 2rem;
 $branding-fill: {{ (.Scratch.Get "branding").fill }};
 $branding-accent: {{ (.Scratch.Get "branding").accent }};
 
 $small-font: 0.875em;   // 14px
 $large-font: 1.375em;   // 22px
 
+
+// MIXINS & FUNCTIONS
 // Fluid interpolation helpers via Mike Riethmuller - modified with defaults
 // See: https://www.madebymike.com.au/writing/fluid-type-calc-examples/
 // Interpolate the given properties from min-value to max-value fluidly with screen size
@@ -67,8 +71,9 @@ $navbar-breakpoint: 45em !default; // defaults to 720px @ 16px base font size
 }
 
 
-// Body Fonts: use the same system fonts as github
-%font-main {
+// FONT FAMILY HELPERS
+// sans-serif system font stack via github; includes emoji as this will be the body font
+%font-sans {
     font-family: -apple-system, 
                  BlinkMacSystemFont, 
                  "Segoe UI", 
@@ -77,27 +82,43 @@ $navbar-breakpoint: 45em !default; // defaults to 720px @ 16px base font size
                  sans-serif, 
                  "Apple Color Emoji", 
                  "Segoe UI Emoji", 
-                 "Segoe UI Symbol";
+                 "Segoe UI Symbol"; 
 }
 
-// Code Blocks: use the same system fonts as github
-%font-code {
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+// serif system font stacks are hard to find; slightly modified this one from
+// https://www.client9.com/css-system-font-stack-serif-medium-v1/
+%font-serif {
+    font-family: "Iowan Old Style", 
+                 "Book Antiqua", 
+                 "Palatino Linotype", 
+                 Palatino, 
+                 "URW Palladio L", 
+                 "Georgia", 
+                 "Times New Roman", 
+                 serif;
 }
 
-%font-brand-caps {
-    @extend %font-code;
+// monospace system font stack via github
+%font-mono {
+    font-family: "SFMono-Regular", 
+                 Consolas, 
+                 "Liberation Mono", 
+                 Menlo, 
+                 Courier, 
+                 monospace;
+}
+
+// brand content in the main header, etc
+%font-brand {
+    @extend %font-mono;
     text-transform: uppercase;
+    font-weight: 400;
 }
 
-%font-title {
-    @extend %font-main;
-    font-family: "Proxima Nova";
-    font-weight: bold;
-}
 
+// FLUID TYPOGRAPHY & VERTICAL RHYTHM
 body {
-    @extend %font-main;
+    @extend %font-sans;
 	@include interpolate((
 	    font-size: ( $small-font, $large-font ),
 	    line-height: ( 1.6em, 1.4em ),
@@ -106,7 +127,8 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    @extend %font-title;
+    @extend %font-serif;
+    font-weight: 600;
 }
 
 h1 {
@@ -160,6 +182,20 @@ h6 {
     font-size: 0.8em;
 }
 
+p code {
+    font-size: 1em;
+}
+
+pre,
+code {
+    @extend %font-mono;
+    @include interpolate((
+        font-size: ( 0.95em, 0.82em ),
+    ));
+}
+
+
+// BASIC ELEMENT STYLING
 p {
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -185,9 +221,8 @@ hr {
     color: #ddd
 }
 
-pre,
-code {
-    font-size: 0.95em;
+p code {
+    font-weight: 300;
 }
 
 pre:not(.chroma) {
@@ -195,48 +230,134 @@ pre:not(.chroma) {
     padding-bottom: 0.5rem;
 }
 
-kbd,
-code {
-    @extend %font-code;
-}
-
 kbd {
-    font-weight: bold;
+    @extend %font-mono;
+    font-weight: 600;
+}
+
+dl {
+    margin: 0 1rem;
+
+    dt {
+        margin-top: 0.8em;
+        font-size: 1.2em;
+        font-weight: 400;
+        color: $branding-accent;
+        counter-reset: definition-counter;
+    }
+
+    dd {
+        margin: 0;
+        font-size: 0.9em;
+        font-weight: 200;
+
+        &:before {
+            content: counter(definition-counter) ". ";
+            counter-increment: definition-counter;
+            margin-right: 0.8em;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+    }
+}
+
+q {
+    quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+abbr[title],
+abbr {
+    text-decoration: underline dotted $branding-accent;
+}
+
+mark {
+    background: transparent;
+    text-decoration: underline wavy $branding-accent;
+}
+
+blockquote {
+    @extend %font-serif;
+    margin: 0 1rem;
+    padding: 0 0;
+    position: relative;
+
+    &:before {
+        content:"\201C";
+        position: absolute;
+        top: 0.35em;
+        left: 0.3em;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-size: 7em;
+        color: rgba($branding-accent, 0.2);   
+    }
+
+    p {
+        font-size: 1em;
+        font-weight: 200;
+    }   
+
+    blockquote {
+        font-size: 0.9em;
+
+        &:before {
+            color: rgba(#ddd, 0.4);
+        }
+    }
+    
+    > cite {
+        position: absolute;
+        bottom: -1.8em;
+        right: 1.8rem;
+        font-weight: 400;
+
+        &:before {
+            content: "\2014";
+            margin-right: 0.2em;
+        }
+    }
+}
+
+sup, sub {
+    vertical-align: baseline;
+    position: relative;
+    top: -0.4em;
+    padding: 0 0.1rem;
+}
+
+sub {
+    top: 0.4em;
 }
 
 
-
+// PAGE LAYOUT
 
 %brand-hover {
     color: $branding-accent;
-}
-
-%brand-hover-no-decoration {
-    @extend %brand-hover;
     text-decoration: none;
 }
 
 %brand-hover-masthead {
-    @extend %brand-hover-no-decoration;
+    @extend %brand-hover;
     fill: $branding-accent;
 }
 
+//// SITE-WIDE NAVBAR & SIDEBAR
 %header-bar {
     position: fixed;
     z-index: 10000;
     top: 0;
     left: 0;
-    min-height: $header-size;
-    height: $header-size;
+    min-height: 3.6rem;
+    height: 3.6rem;
     width: 100%;
     box-shadow: 0 0.2rem 0.02rem rgba(70, 70, 70, 0.3);
-    font-size: $header-basis;
+    font-size: 1.2rem;
 }
-
 
 .navbar {
     @extend %header-bar;
-    @extend %font-brand-caps;
+    @extend %font-brand;
     background-color: white;
     fill: $branding-fill;
     display: flex;
@@ -256,12 +377,12 @@ kbd {
     }
 
     .branding {
-       padding-left: $horizontal-pad;
+       padding-left: 2rem;
        text-align: left;
        flex: 1 0 0;
     
        svg {
-           height: $header-basis;
+           height: 1.2rem;
            width: auto;
            vertical-align: middle;
            padding-bottom: 0.10rem;
@@ -270,7 +391,7 @@ kbd {
     
     .items {
         flex: 1 0 0;
-        padding-right: $horizontal-pad;
+        padding-right: 2rem;
         display: none;
         text-align: right;
 
@@ -284,7 +405,7 @@ kbd {
     }
 
     .toggle {
-        padding-right: $horizontal-pad;
+        padding-right: 2rem;
         cursor: pointer;
         flex: 1 0 0;
         text-align: right;
@@ -326,7 +447,7 @@ kbd {
         align-items: center;
 
         .toggle {
-            padding-right: $horizontal-pad;
+            padding-right: 2rem;
             cursor: pointer;
             flex: 1 0 0;
             text-align: right;
@@ -339,8 +460,8 @@ kbd {
     }
 
     .items {
-        padding-top: $header-size + 1;
-        padding-right: $horizontal-pad;
+        padding-top: 3.6rem;
+        padding-right: 2rem;
         font-size: 1.65rem;
 
         .item {
@@ -351,26 +472,19 @@ kbd {
 }
 
 
-
+//// MAIN CONTENT
 .site-content {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     height: 100vh;
-
-    @include toggle-navbar {
-        width: 45rem;
-    }
-
+    min-width: 18rem;
+    max-width: 55rem;
 }
 
 .site-main {
     padding: 0 1.25rem;
     flex: 1 0 auto;
-
-    @include toggle-navbar {
-        padding: 0 0;;
-    }
 }
 
 .main-content {
@@ -382,11 +496,11 @@ kbd {
 .post-content {
 }
 
+
+//// SITE FOOTER
 .main-footer {
     flex-shrink: 0;
 }
-
-
 
 .site-footer {
     flex-shrink: 0;
@@ -414,7 +528,7 @@ kbd {
 }
 
 .social-items a:hover {
-    @extend %brand-hover-no-decoration;
+    @extend %brand-hover;
 }
 
 .social-item {
@@ -423,11 +537,23 @@ kbd {
     font-size: 1.8rem;
 }
 
+.copyright {
+    @extend %font-brand;
+    font-size: .55em;
+    padding: 0.4rem 0;
+    margin: 0;
+
+    @include toggle-navbar {
+        font-size: .85em;
+    }
+}
+
+////// MAIN: ABOVE THE FOLD
 .terms-header,
 .list-header,
 .post-header {
 
-    padding-top: $header-size + 1;
+    padding-top: 4.6rem;
     padding-left: 1rem;
     padding-right: 1rem;
     border-bottom-right-radius: 0.4rem;
@@ -436,9 +562,16 @@ kbd {
     box-shadow: 0 0.4rem 0.4rem rgba(70, 70, 70, 0.3);
 
     @include toggle-navbar {
-        padding-top: $header-size + 2;
+        padding-top: 5.6rem;
     }
+}
 
+.title {
+    margin: 0;
+    color: white;
+
+    @include toggle-navbar {
+    }
 }
 
 .post-metadata {
@@ -471,8 +604,6 @@ kbd {
     @include toggle-navbar {
         flex-direction: row;
     }
-
-
 }
 
 .post-metadata-item {
@@ -489,26 +620,10 @@ kbd {
     padding-right: 0;
 }
 
-.copyright {
-    @extend %font-brand-caps;
-    font-size: .55em;
-    padding: 0.4rem 0;
-    margin: 0;
 
-    @include toggle-navbar {
-        font-size: .85em;
-    }
+////// MAIN CONTENT
 
-}
-
-.title {
-    margin: 0;
-    color: white;
-
-    @include toggle-navbar {
-    }
-}
-
+//////// LIST PAGE: CONTENT
 .summaries {
     display: flex;
     flex-direction: column;
@@ -549,7 +664,7 @@ kbd {
 }
 
 .summary a:hover {
-    @extend %brand-hover-no-decoration;
+    @extend %brand-hover;
 }
 
 .summary-title {
@@ -613,7 +728,11 @@ kbd {
 
 
 
+//////// POST PAGE CONTENT
 
+////////// LIST ELEMENTS
+
+// ordered lists
 .post-content ol {
     list-style: none;
     counter-reset: ol-counter;
@@ -644,6 +763,7 @@ kbd {
     }
 }
 
+// unordered lists
 .post-content ul:not(.task-list) {
     padding: 0;
     list-style-position: inside;
@@ -657,84 +777,7 @@ kbd {
     }
 }
 
-/*
-.post-content ul:not(.task-list) {
-    list-style: none;
-    padding: 0;
-}
-
-.post-content ul:not(.task-list) li {
-    display: block;
-    padding-left: 1rem;
-
-    p:first-of-type {
-        display: inline;
-    }
-
-}
-
-.post-content ul:not(.task-list) li:before {
-    font-weight: bold;
-    content: "🠶";
-    color: $branding-accent;
-    padding-right: 0.7rem;
-}
-/*
-
-
-
-
-/*
-.post-content dl {
-    padding: 0;
-}
-
-.post-content dl dt {
-    font-weight: bold;
-    padding-left: 1rem;
-}
-
-.post-content dl dd {
-    display: block;
-    padding: 0;
-}
-
-.post-content dl dd:before {
-    font-weight: bold;
-    content: "🠶";
-    color: $branding-accent;
-    padding-right: 0.7rem;
-}
-*/
-
-dl {
-    margin: 0 1rem;
-
-    dt {
-        margin-top: 0.8em;
-        font-size: 1.2em;
-        font-weight: 400;
-        color: $branding-accent;
-        counter-reset: definition-counter;
-    }
-
-    dd {
-        margin: 0;
-        font-size: 0.9em;
-        font-weight: 200;
-
-        &:before {
-            content: counter(definition-counter) ". ";
-            counter-increment: definition-counter;
-            margin-right: 0.8em;
-            font-size: 0.8em;
-            font-weight: 500;
-        }
-    }
-}
-
-
-
+// github-style task lists
 .task-list { 
     list-style: none;
 
@@ -791,263 +834,10 @@ dl {
     }
 }
 
-
-
-q {
-    quotes: "\201C" "\201D" "\2018" "\2019";
-}
-
-abbr[title],
-abbr {
-    text-decoration: underline dotted $branding-accent;
-}
-
-mark {
-    background: transparent;
-    text-decoration: underline wavy $branding-accent;
-}
-
-blockquote {
-    margin: 0 1rem;
-    padding: 0 0;
-    position: relative;
-}
-
-blockquote p {
-    font-size: 1.2em;
-    font-weight: 200;
-}
-
-blockquote:before {
-  position: absolute;
-  font-family: serif;
-  top: 0.35em;
-  left: 0.3em;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  content:"\201C";
-  font-size: 7em;
-  color: rgba($branding-accent, 0.2);   
-}
-
-blockquote blockquote {
-    font-size: 0.9em;
-
-    &:before {
-        color: rgba(#ddd, 0.4);
-    }
-}
-
-blockquote > cite {
-    position: absolute;
-    bottom: -1.8em;
-    right: 1.8rem;
-    font-weight: 400;
-
-    &:before {
-        content: "\2014";
-        margin-right: 0.2em;
-    }
-}
-
-/*
-blockquote p:first-child:before,
-blockquote p:last-child:after {
-    position: absolute;
-    display: inline;
-}
-
-blockquote p:first-child:before {
-    left: 0;
-    top: 5rem;
-}
-
-blockquote p:last-child:after {
-    right: 0;
-    bottom: 0;
-}
-*/
-
-
-/*
-.post-content blockquote {
-    font-size: 0.9rem;
-    line-height: 1.1rem;
-    border-left: 5px solid $branding-accent;
-
-    padding: 0 1rem;
-    margin: 0.4rem 0;
-}
-
-.post-content blockquote blockquote {
-    border-left: 5px solid #ddd;
-}
-*/
-
-/*
-.post-content table {
-    margin: auto;
-    border-top: 1px solid #666;
-    border-bottom: 1px solid #666
-}
-
-.post-content table thead th {
-    border-bottom: 1px solid #ddd
-}
-
-.post-content th,
-.post-content td {
-    padding: 5px
-}
-
-.post-content thead,
-.post-content tfoot,
-.post-content tr:nth-child(even) {
-    background: #eee
-}
-*/
-
-
-.left {
-    text-align: left;
-}
-
-.right {
-    text-align: right;
-}
-
-.bullets {
-    @extend %font-brand-caps;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    color: #ddd;
-
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-}
-
-.bullet-item {
-    display: block;
-    padding: 0 2rem;
-}
-
-.bullet-metadata-items {
-
-    padding: 0;
-    display: flex;
-    flex-flow: row wrap;
-}
-
-.bullet-metadata-item {
-    display: inline-block;
-}
-
-.bullet-metadata-title {
-    flex: 666;
-}
-
-
-.pagination {
-    @extend %font-brand-caps;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    margin-top: 1rem;
-    display: none;
-    justify-content: space-between;
-    color: #ddd;
-    padding: 0;
-    margin-bottom: 0;
-    text-align: center;
-
-    @include toggle-navbar {
-        display: flex;
-    }
-}
-
-.pagination a {
-    color: $branding-fill;
-    font-weight: bold;
-    text-decoration: none
-}
-
-.pagination a:hover {
-    @extend %brand-hover-no-decoration;
-}
-
-.page-item {
-    display: inline-block;
-    flex: 1 0 1.5rem;
-}
-
-.page-item-spacer {
-    display: inline-block;
-    flex: 666;
-}
-
-.post-nav {
-    @extend %font-brand-caps;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    margin-top: 1rem;
-    display: none;
-    justify-content: space-between;
-    color: #ddd;
-
-    @include toggle-navbar {
-        display: flex;
-    }
-}
-
-.post-nav a {
-    color: $branding-fill;
-    text-decoration: none
-}
-
-.post-nav-title {
-    color: #ddd
-}
-
-.post-nav a:hover,
-.post-nav-title:hover {
-    @extend %brand-hover-no-decoration;
-}
-
-.post-nav-prev {
-    text-align: left;
-}
-
-.post-nav-next {
-    text-align: right;
-}
-
-/*
-<div class="highlight">
-    <div class="chroma">
-        <table class="lntable">
-            <tr>
-                <td class="lntd">
-                    <pre class="chroma">
-                        <span class="lnt">1</span>
-                    </pre>
-                </td>
-                <td class="lntd">
-                    <pre class="chroma">return shell_exec(&#34;echo $input | $markdown_script&#34;);</pre>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
-*/
-
+// syntax-highlighted code blocks
 .highlight {
     margin: 1rem 0;
     width: 100%;
-
-    > pre.chroma :not(code) {
-    }
 
     > pre.chroma {
         margin: 0;
@@ -1058,7 +848,7 @@ blockquote p:last-child:after {
 
         > code {
             display: block;
-            padding: 0.8rem;
+            padding: 1rem;
         }
     }
 
@@ -1071,7 +861,7 @@ blockquote p:last-child:after {
 
         tr {
             .lntd {
-                padding: 0.2rem 0;
+                padding: 0;
 
                 &:first-child {
                     text-align: right;
@@ -1083,128 +873,14 @@ blockquote p:last-child:after {
             }
 
             .lnt {
-                padding-left: 0.8rem;
+                padding-left: 1rem;
                 padding-right: 0.8rem;
             }
         }
     }
 }
 
-/*
-pre.chroma {
-    border: 1px solid lime;
-}
-
-.highlight {
-}
-
-.highlight .chroma {
-}
-
-
-.lntable { 
-}
-
-.lntable tr {
-
-}
-
-.lntable .lntd:first-of-type {
-    background: desaturate($branding-accent, 40%);
-    color: white;
-}
-
-.lntable .lntd:first-of-type pre {
-    min-width: 2rem;
-    padding-left: 0.6rem;
-    padding-right: 0.6rem;
-    text-align: right;
-    background: none;
-}
-
-.lnt {
-}
-*/
-
-.terms {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    align-content: space-around;
-    padding: 0 2rem;
-}
-
-{{- range $taxon, $taxonomy := .Site.Taxonomies -}}
-{{- $counts := slice -}}
-{{- $taxon := $taxon | singularize | anchorize | urlize -}}
-{{- range $key, $value := $taxonomy -}}
-{{- $count := len $value.Pages -}}
-{{- $counts = $counts | append $count -}}
-{{- end -}}
-{{- $counts := sort (uniq $counts) -}}
-{{- $nums := len $counts -}}
-{{- $low := index $counts 0 -}}
-{{- $high := index $counts (sub $nums 1) }}
-{{- range $count := $counts }}
-{{- if (gt $high $low) -}}
-{{- $norm := div (sub (float $count) $low) (sub $high $low) -}}
-{{- $dnorm := add (mul $norm (sub 4 1)) 1 -}}
-{{- $selector := printf ".%s-%d" $taxon $count -}}
-{{ $selector }} {
-    display: block;
-    padding: 0 0.3rem;
-    font-size: 0.6rem * {{ $dnorm }};
-
-    @include toggle-navbar {
-        font-size: 1rem * {{ $dnorm }};
-    }
-}
-{{- end -}}
-{{- end -}}
-{{- end }}
-
-
-.footnote-ref {
-    font-weight: bold;
-    padding-left: 0.1rem;
-
-    > a {
-        &:before { 
-            content: '[' 
-        }
-
-        &:after { 
-            content: ']' 
-        }
-    }
-}
-
-.footnote-return {
-    font-weight: bold;
-}
-
-
-
-sup, sub {
-    vertical-align: baseline;
-    position: relative;
-    top: -0.4em;
-    padding: 0 0.1rem;
-}
-
-sub {
-    top: 0.4em;
-}
-
-
-
-$gl-ms         : "screen and (max-width: 23.5em)"; // up to 360px
-$gl-xs         : "screen and (max-width: 35.5em)"; // up to 568px
-$gl-sm         : "screen and (max-width: 48em)";   // max 768px
-$gl-md         : "screen and (max-width: 64em)";   // max 1024px
-$gl-lg         : "screen and (max-width: 80em)";   // max 1280px
-
+// data tables
 .table {
     overflow-x: auto;
 }
@@ -1264,3 +940,184 @@ table:not(.lntable) {
     }
 }
 
+// in-post footnotes
+.footnote-ref {
+    font-weight: bold;
+    padding-left: 0.1rem;
+
+    > a {
+        &:before { 
+            content: '[' 
+        }
+
+        &:after { 
+            content: ']' 
+        }
+    }
+}
+
+.footnote-return {
+    font-weight: bold;
+}
+
+
+
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+}
+
+.bullets {
+    @extend %font-brand;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: #ddd;
+
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+
+.bullet-item {
+    display: block;
+    padding: 0 2rem;
+}
+
+.bullet-metadata-items {
+
+    padding: 0;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.bullet-metadata-item {
+    display: inline-block;
+}
+
+.bullet-metadata-title {
+    flex: 666;
+}
+
+
+.pagination {
+    @extend %font-brand;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    display: none;
+    justify-content: space-between;
+    color: #ddd;
+    padding: 0;
+    margin-bottom: 0;
+    text-align: center;
+
+    @include toggle-navbar {
+        display: flex;
+    }
+}
+
+.pagination a {
+    color: $branding-fill;
+    font-weight: bold;
+    text-decoration: none
+}
+
+.pagination a:hover {
+    @extend %brand-hover;
+}
+
+.page-item {
+    display: inline-block;
+    flex: 1 0 1.5rem;
+}
+
+.page-item-spacer {
+    display: inline-block;
+    flex: 666;
+}
+
+
+// between post navigation
+.post-nav {
+    @extend %font-brand;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    display: none;
+    justify-content: space-between;
+    color: #ddd;
+
+    @include toggle-navbar {
+        display: flex;
+    }
+}
+
+.post-nav a {
+    color: $branding-fill;
+    text-decoration: none
+}
+
+.post-nav-title {
+    color: #ddd
+}
+
+.post-nav a:hover,
+.post-nav-title:hover {
+    @extend %brand-hover;
+}
+
+.post-nav-prev {
+    text-align: left;
+}
+
+.post-nav-next {
+    text-align: right;
+}
+
+
+
+
+// TAXONOMY PAGE CONTENT (GENERATED ON THE FLY)
+.terms {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: space-around;
+    padding: 0 2rem;
+}
+
+{{- range $taxon, $taxonomy := .Site.Taxonomies -}}
+{{- $counts := slice -}}
+{{- $taxon := $taxon | singularize | anchorize | urlize -}}
+{{- range $key, $value := $taxonomy -}}
+{{- $count := len $value.Pages -}}
+{{- $counts = $counts | append $count -}}
+{{- end -}}
+{{- $counts := sort (uniq $counts) -}}
+{{- $nums := len $counts -}}
+{{- $low := index $counts 0 -}}
+{{- $high := index $counts (sub $nums 1) }}
+{{- range $count := $counts }}
+{{- if (gt $high $low) -}}
+{{- $norm := div (sub (float $count) $low) (sub $high $low) -}}
+{{- $dnorm := add (mul $norm (sub 4 1)) 1 -}}
+{{- $selector := printf ".%s-%d" $taxon $count -}}
+{{ $selector }} {
+    display: block;
+    padding: 0 0.3rem;
+    font-size: 0.6rem * {{ $dnorm }};
+
+    @include toggle-navbar {
+        font-size: 1rem * {{ $dnorm }};
+    }
+}
+{{- end -}}
+{{- end -}}
+{{- end }}

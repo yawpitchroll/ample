@@ -1,12 +1,3 @@
-# font defaults for various sections of the site; individual
-# font names below must exactly match the Google Fonts name
-[fonts]
-    brand = "Source Code Pro"       # branded text, ie in the header
-    title = "Raleway"               # title text in main content
-    main = "Proxima Nova"           # body text in main content
-    code = "Source Code Pro"        # code text for syntax highlighted content
-    accent = "#0379C4"              # accent color for highlighting text
-
 # branding for the header bar
 [branding]
     logo = "svg/ampproject-official.svg"

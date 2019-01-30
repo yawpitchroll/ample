@@ -3,22 +3,22 @@
 <nav class="post-nav">
 	<div class="post-nav-prev">
 	{{- if .PrevInSection }}
-		<a href="{{ .PrevInSection.RelPermalink }}" rel="prev">
-            <i class="fas fa-backward"></i>
+        <a href="{{ .PrevInSection.RelPermalink }}" rel="prev" title="{{ .PrevInSection.Title }}">
+            {{ partial "util/fontawesome.html" "backward-solid" }}
 			<span class="post-nav-title">"{{ .PrevInSection.Title | truncate 30 }}"</span>
 		</a>
     {{- else }}
-        <i class="fas fa-backward"></i>
+        {{ partial "util/fontawesome.html" "backward-solid" }}
 	{{- end }}
 	</div>
 	<div class="post-nav-next">
 	{{- if .NextInSection }}
-		<a href="{{ .NextInSection.RelPermalink }}" rel="next">
+        <a href="{{ .NextInSection.RelPermalink }}" rel="next" title="{{ .NextInSection.Title }}">
 			<span class="post-nav-title">"{{ .NextInSection.Title | truncate 30 }}"</span>
-            <i class="fas fa-forward"></i>
+            {{ partial "util/fontawesome.html" "forward-solid" }}
 		</a>
     {{- else }}
-        <i class="fas fa-forward"></i>
+        {{ partial "util/fontawesome.html" "forward-solid" }}
 	{{- end }}
 	</div>
 </nav>

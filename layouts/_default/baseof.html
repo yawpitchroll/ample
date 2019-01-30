@@ -7,9 +7,6 @@
         <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
         <title>{{ block "title" . }}{{ .Param "Title" }} | {{ (.Scratch.Get "branding").title }}{{ end }}</title>
         {{ partial "head_custom.html" . | chomp }}
-        {{- if .Site.GoogleAnalytics -}}
-        {{ template "_internal/google_analytics.html" . }}
-        {{- end -}}
         {{ .Hugo.Generator }}
         {{ partialCached "fonts/font-awesome.html" . | chomp }}
         {{ partialCached "amp/boilerplate.html" . | chomp }}
@@ -20,7 +17,7 @@
     <body>
         <header class="navbar">
             {{- with .Scratch.Get "branding" }}
-            <a class="branding" href="/">
+            <a class="branding" href="/" title="Home">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 158.75 158.75"><path d="M33.143 44.418c-2.585 1.685-4.272 2.904-4.531 3.354-.17.295-.32 1.305-.451 2.821C46.4 60.65 72.47 76.161 73.684 78.265c1.26 2.181 1.641 34.696 1.154 55.504 2.408 1.204 4.059 1.927 4.537 1.927.522 0 2.44-.86 5.22-2.27-.471-20.827-.085-52.867 1.164-55.032 1.2-2.078 26.668-17.248 44.872-27.311-.14-1.8-.304-2.984-.493-3.311-.26-.45-1.946-1.668-4.53-3.354C107.788 55.16 81.783 69.71 79.376 69.71c-2.407 0-28.412-14.55-46.233-25.291zM79.375 4.45c-3.631 0-61.083 33.17-62.899 36.314-1.815 3.145-1.815 69.485 0 72.63 1.816 3.145 59.268 36.314 62.9 36.314 3.63 0 61.082-33.17 62.898-36.314 1.815-3.145 1.815-69.485 0-72.63-1.816-3.145-59.267-36.314-62.899-36.314zm0 7.384c3.263 0 54.873 29.797 56.504 32.622 1.631 2.826 1.631 62.42 0 65.246-1.63 2.825-53.241 32.623-56.504 32.623-3.262 0-54.873-29.798-56.504-32.623-1.631-2.825-1.631-62.42 0-65.246 1.63-2.825 53.242-32.622 56.504-32.622z"/></svg>
                 {{ .title }}
             </a>
@@ -28,19 +25,17 @@
             <nav>
                 <ul class="items">
                     {{- range .Site.Menus.main }}
-                    <li class="item"><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
+                    <li class="item"><a href="{{ .URL | relURL }}" title="{{ .Name }}">{{ .Name }}</a></li>
                     {{- end }}
                 </ul>
             </nav> 
-            {{- $open_fa := .Site.Params.sidebar.open_fa | default "fab fa-bars" }}
-            <div class="toggle" role="button" aria-label="open menu" on="tap:nav-sidebar.toggle" tabindex="0"><i class="{{ $open_fa }}"></i></div>
+            <div class="toggle" role="button" aria-label="open menu" on="tap:nav-sidebar.toggle" tabindex="0">{{- partial "util/fontawesome.html" "bars-solid" -}}</div>
         </header>
 
-        {{- $close_fa := .Site.Params.sidebar.close_fa | default "fab fa-angle-double-right" }}
         <amp-sidebar id="nav-sidebar" class="sidebar" layout="nodisplay" side="right">
             <div class="head">
                 <div class="toggle" role="button" aria-label="close menu" on="tap:nav-sidebar.toggle" tabindex="0">
-                    <i class="{{ $close_fa }}"></i>
+                    {{- partial "util/fontawesome.html" "arrow-right-solid" -}}
                 </div>
             </div>
             <nav>
@@ -68,12 +63,12 @@
                         {{- if .Site.Menus.icon -}}
                         {{- range sort .Site.Menus.icon }}
                         <li class="social-item">
-                            <a href="{{ .URL }}"><i class="fab fa-{{ .Name }}"></i></a>
+                            <a href="{{ .URL }}" {{ if .Title -}}title="{{ .Title }}"{{ end }}>{{- partial "util/fontawesome.html" .Name -}}</a>
                         </li>
                         {{- end -}}
                         {{ end }}
                         <li class="social-item">
-                            <a href="{{ .RSSLink }}"><i class="fab fa-rss-square"></i></a>
+                            <a href="{{ .RSSLink }}" title="Subscribe by RSS">{{- partial "util/fontawesome.html" "rss-square-solid" -}}</i></a>
                         </li>
                     </ul>
                 </nav>

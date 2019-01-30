@@ -1,27 +1,27 @@
 <ul class="post-metadata-items">
     {{- with .Params.date }}
     <li class="post-metadata-item">
-        <i class="fab fa-calendar-alt"></i>{{ partial "util/date.html" . | chomp }}
+        {{ partial "util/fontawesome.html" "calendar-alt-regular" }}{{ partial "util/date.html" . | chomp }}
     </li>
     {{- end }}
     {{- with .Params.categories -}}
     {{- $links := apply (apply (sort .) "partial" "util/category.html" ".") "chomp" "." }}
     <li class="post-metadata-item">
-        <i class="fab fa-folder-open"></i>{{ delimit $links ", " " & " }}
+        {{ partial "util/fontawesome.html" "folder-open-solid" }}{{ delimit $links ", " " & " }}
     </li>
     {{- end }}
     {{- with .Params.tags -}}
     {{- $links := apply (apply (sort .) "partial" "util/tag.html" ".") "chomp" "." }}
     <li class="post-metadata-item">
-        <i class="far fa-tag"></i>{{ delimit $links ", " " & " }}
+        {{ partial "util/fontawesome.html" "tag-solid" }}{{ delimit $links ", " " & " }}
     </li>
     {{- end }}
-    {{- $icon := cond (gt .WordCount 2000) "fas fa-book" "far fa-file-alt" -}}
+    {{- $icon := cond (gt .WordCount 2000) "book-solid" "file-alt-solid" -}}
     <li class="post-metadata-item">
-        <i class="{{ $icon }}"></i>{{ .WordCount }} words
+        {{ partial "util/fontawesome.html" $icon }}{{ .WordCount }} words
     </li>
     {{- $mins := cond (eq .ReadingTime 1) "min" "mins" -}}
     <li class="post-metadata-item">
-        <i class="far fa-clock"></i>{{ .ReadingTime }} {{ $mins }}
+        {{ partial "util/fontawesome.html" "clock-solid" }}{{ .ReadingTime }} {{ $mins }}
     </li>
 </ul>

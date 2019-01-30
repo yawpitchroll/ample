@@ -1,13 +1,13 @@
-// CROSS-BROWSER NORMALIZE
+//// CROSS-BROWSER NORMALIZE
 @import "normalize";
 
 
-// INJECT CODE HIGHLIGHTING
+//// INJECT CODE HIGHLIGHTING
 // TODO: Figure out a way to disable this if pigmentsUseClasses is disabled
 @import "{{ .Site.Params.Ample.syntaxStyle | default "light" }}";
 
 
-// COMMON VARIABLES & HUGO CONFIGURATION
+//// COMMON VARIABLES & HUGO CONFIGURATION
 /* variables used throughout the style sheet */
 $branding-fill: {{ (.Scratch.Get "branding").fill }};
 $branding-accent: {{ (.Scratch.Get "branding").accent }};
@@ -16,7 +16,7 @@ $small-font: 0.875em;   // 14px
 $large-font: 1.375em;   // 22px
 
 
-// MIXINS & FUNCTIONS
+//// COMMON MIXINS & FUNCTIONS
 // Fluid interpolation helpers via Mike Riethmuller - modified with defaults
 // See: https://www.madebymike.com.au/writing/fluid-type-calc-examples/
 // Interpolate the given properties from min-value to max-value fluidly with screen size
@@ -71,7 +71,8 @@ $navbar-breakpoint: 45em !default; // defaults to 720px @ 16px base font size
 }
 
 
-// FONT FAMILY HELPERS
+//// TYPOGRAPHY
+/// FONT HELPERS
 // sans-serif system font stack via github; includes emoji as this will be the body font
 %font-sans {
     font-family: -apple-system, 
@@ -115,8 +116,7 @@ $navbar-breakpoint: 45em !default; // defaults to 720px @ 16px base font size
     font-weight: 400;
 }
 
-
-// FLUID TYPOGRAPHY & VERTICAL RHYTHM
+/// FLUID TYPOGRAPHY & VERTICAL RHYTHM
 body {
     @extend %font-sans;
 	@include interpolate((
@@ -182,10 +182,6 @@ h6 {
     font-size: 0.8em;
 }
 
-p code {
-    font-size: 1em;
-}
-
 pre,
 code {
     @extend %font-mono;
@@ -195,13 +191,9 @@ code {
 }
 
 
-// BASIC ELEMENT STYLING
-p {
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
-}
-
+//// COMMON ELEMENT STYLING
+/// INLINE ELEMENTS
+// links
 a {
     transition: 200ms;
     transition-timing-function: ease-in-out;
@@ -216,25 +208,69 @@ a {
     }
 }
 
-hr {
-    border-style: dashed;
-    color: #ddd
-}
-
-p code {
-    font-weight: 300;
-}
-
-pre:not(.chroma) {
-    overflow-x: auto;
-    padding-bottom: 0.5rem;
-}
-
+// keyboard
 kbd {
     @extend %font-mono;
     font-weight: 600;
 }
 
+// quotes
+q {
+    quotes: "\201C" "\201D" "\2018" "\2019";
+}
+
+// abbreviations 
+abbr[title],
+abbr {
+    text-decoration: underline dotted $branding-accent;
+}
+
+// marked text
+mark {
+    background: transparent;
+    text-decoration: underline wavy $branding-accent;
+}
+
+// superscript and subscript
+sup,
+sub {
+    vertical-align: baseline;
+    position: relative;
+    top: -0.4em;
+    padding: 0 0.1rem;
+}
+
+sub {
+    top: 0.4em;
+}
+
+// special-case for inline <code> tags, Hugo likes to decorate a lot of stuff with <code>
+p code {
+    font-size: 1em;
+    font-weight: 300;
+}
+
+/// BLOCK ELEMENT STYLING
+// paragraph rendering and breaks
+p {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+// horizontal rules
+hr {
+    border-style: dashed;
+    color: #ddd
+}
+
+// special-case indented (not ```-fenced) pre-formatted blocks
+pre:not(.chroma) {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+// definition lists
 dl {
     margin: 0 1rem;
 
@@ -261,88 +297,77 @@ dl {
     }
 }
 
-q {
-    quotes: "\201C" "\201D" "\2018" "\2019";
-}
-
-abbr[title],
-abbr {
-    text-decoration: underline dotted $branding-accent;
-}
-
-mark {
-    background: transparent;
-    text-decoration: underline wavy $branding-accent;
-}
-
+// blockquotes
 blockquote {
     @extend %font-serif;
-    margin: 0 1rem;
-    padding: 0 0;
+    margin: 1rem 1.5rem;
+    padding: 0.6em 0.5em;
     position: relative;
+    border-top: 0.2em solid rgba($branding-accent, 0.4);
+    border-bottom: 0.2em solid rgba($branding-accent, 0.4);
+    //text-align: center;
 
     &:before {
+        position: absolute;
         content:"\201C";
         position: absolute;
-        top: 0.35em;
-        left: 0.3em;
+        top: 0;
+        left: 0.8em;
+        font-size: 3em;
+        line-height: 0.6;
+        color: rgba($branding-accent, 0.4);
         transform: translate(-50%, -50%);
+        width: 0.5em;
+        height: 0.25em; 
         text-align: center;
-        font-size: 7em;
-        color: rgba($branding-accent, 0.2);   
+        background: white;
     }
 
     p {
         font-size: 1em;
-        font-weight: 200;
+        font-weight: 300;
     }   
 
+    // nested blockquotes
     blockquote {
         font-size: 0.9em;
+        border-top: 0.2em solid rgba(#ddd, 0.2);
+        border-bottom: 0.2em solid rgba(#ddd, 0.2);
 
         &:before {
-            color: rgba(#ddd, 0.4);
+            color: rgba(#ddd, 0.2);
         }
     }
     
+    // included citations
     > cite {
-        position: absolute;
-        bottom: -1.8em;
-        right: 1.8rem;
-        font-weight: 400;
+        position: relative;
+        font-weight: 100;
 
         &:before {
             content: "\2014";
             margin-right: 0.2em;
+            font-weight: 100;
         }
     }
 }
 
-sup, sub {
-    vertical-align: baseline;
-    position: relative;
-    top: -0.4em;
-    padding: 0 0.1rem;
-}
 
-sub {
-    top: 0.4em;
-}
-
-
-// PAGE LAYOUT
-
+//// SITE-WIDE STRUCTURAL ELEMENTS
+/// SITE COMMON HELPERS
+// branded links
 %brand-hover {
     color: $branding-accent;
     text-decoration: none;
 }
 
-%brand-hover-masthead {
+// branded links with svg elements
+%brand-hover-svg {
     @extend %brand-hover;
     fill: $branding-accent;
 }
 
-//// SITE-WIDE NAVBAR & SIDEBAR
+/// NAVBAR & SIDEBAR
 %header-bar {
     position: fixed;
     z-index: 10000;
@@ -351,35 +376,34 @@ sub {
     min-height: 3.6rem;
     height: 3.6rem;
     width: 100%;
-    box-shadow: 0 0.2rem 0.02rem rgba(70, 70, 70, 0.3);
+    box-shadow: 0 0.2rem 0.02rem rgba(#777, 0.3);
     font-size: 1.2rem;
 }
 
+// fixed top navbar
 .navbar {
     @extend %header-bar;
     @extend %font-brand;
-    background-color: white;
+    background: white;
     fill: $branding-fill;
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    @include toggle-navbar {
-        align-items: baseline;
-    }
-
+    // navbar links
     a {
         color: $branding-fill;
 
         &:hover {
-            @extend %brand-hover-masthead;
+            @extend %brand-hover-svg;
         }
     }
 
+    // navbar logo and site name
     .branding {
+       flex: 1 0 0;
        padding-left: 2rem;
        text-align: left;
-       flex: 1 0 0;
     
        svg {
            height: 1.2rem;
@@ -388,7 +412,8 @@ sub {
            padding-bottom: 0.10rem;
        }
     }
-    
+
+    // navbar text links (large screens)
     .items {
         flex: 1 0 0;
         padding-right: 2rem;
@@ -404,30 +429,30 @@ sub {
         }
     }
 
+    // navbar toggle for sidebar (small screens)
     .toggle {
-        padding-right: 2rem;
-        cursor: pointer;
         flex: 1 0 0;
-        text-align: right;
-
+        padding-right: 2rem;
         display: inline-block;
+        text-align: right;
+        cursor: pointer;
 
         @include toggle-navbar {    
             display: none;
         }
 
         &:hover {
-            @extend %brand-hover-masthead;
+            @extend %brand-hover-svg;
         }
-
     }
 }
 
+// sliding sidebar (small screens only)
 .sidebar {
     position: absolute;
     top: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(white, 0.9);
     text-align: right;
     width: 100%;
 
@@ -435,13 +460,14 @@ sub {
         color: $branding-fill;
 
         &:hover {
-            @extend %brand-hover-masthead;
+            @extend %brand-hover-svg;
         }
     }
 
+    // sidebar header
     .head {
         @extend %header-bar;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(white, 0.6);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -454,15 +480,17 @@ sub {
             font-size: 1.65rem;
 
             &:hover {
-               @extend %brand-hover-masthead;
+               @extend %brand-hover-svg;
             }
         }
     }
 
+    // sidebar items
     .items {
         padding-top: 3.6rem;
         padding-right: 2rem;
         font-size: 1.65rem;
+        line-height: 1.5;
 
         .item {
             display: block
@@ -471,15 +499,14 @@ sub {
     }
 }
 
-
-//// MAIN CONTENT
+/// MAIN PAGE CONTENT
 .site-content {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    height: 100vh;
     min-width: 18rem;
     max-width: 55rem;
+    height: 100vh;
 }
 
 .site-main {
@@ -497,7 +524,7 @@ sub {
 }
 
 
-//// SITE FOOTER
+/// SITE FOOTER
 .main-footer {
     flex-shrink: 0;
 }
@@ -505,48 +532,53 @@ sub {
 .site-footer {
     flex-shrink: 0;
     text-align: center;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 1rem;
 
     @include toggle-navbar {
         padding-left: 0;
         padding-right: 0;
     }
 
-}
+    // social link items
+    .social-items {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
 
-.social-items {
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: baseline;
-}
+        a {
+            color: $branding-fill;
 
-.social-items a {
-    color: $branding-fill;
-}
+            &:hover {
+                @extend %brand-hover;
+            }
+        }
 
-.social-items a:hover {
-    @extend %brand-hover;
-}
+        .social-item {
+            display: inline-block;
+            padding: 0 0.50rem;
 
-.social-item {
-    display: inline-block;
-    padding: 0 0.50rem;
-    font-size: 1.8rem;
-}
+            .fontawesome {
+                height: 1.6rem;
+                width: 1.6rem;
+            }
+        }
+    }
 
-.copyright {
-    @extend %font-brand;
-    font-size: .55em;
-    padding: 0.4rem 0;
-    margin: 0;
+    .copyright {
+        @extend %font-brand;
+        font-size: 0.55rem;
+        padding: 0.2rem 0;
+        margin: 0;
 
-    @include toggle-navbar {
-        font-size: .85em;
+        @include toggle-navbar {
+            font-size: .85rem;
+        }
     }
 }
+
+
 
 ////// MAIN: ABOVE THE FOLD
 .terms-header,
@@ -582,43 +614,48 @@ sub {
 
     @include toggle-navbar {
         //font-size: 0.7rem;
+    }   
+
+    a {
+        color: white;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }  
+
+    .post-metadata-items {
+        padding: 0;
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: flex-start;
+        align-items: baseline;
+        line-height: 1rem;
+
+        @include toggle-navbar {
+            flex-direction: row;
+        }
+    }
+
+    .post-metadata-item {
+        display: inline-block;
+        padding-right: 0.6rem;
+        padding-bottom: 0.2rem;
+
+        &:last-of-type {
+            padding-right: 0;
+        }
+
+        .fontawesome {
+            padding-right: 0.3rem;
+            height: 0.9em;
+            width: 0.9em;
+            top: 0.09rem;
+        }
     }
 }
 
-.post-metadata a {
-    color: white;
-}
 
-.post-metadata a:hover {
-    text-decoration: underline;
-}
-
-.post-metadata-items {
-    padding: 0;
-    display: flex;
-    flex-flow: column wrap;
-    justify-content: flex-start;
-    align-items: baseline;
-    line-height: 1rem;
-
-    @include toggle-navbar {
-        flex-direction: row;
-    }
-}
-
-.post-metadata-item {
-    display: inline-block;
-    padding-right: 0.6rem;
-    padding-bottom: 0.2rem;
-}
-
-.post-metadata-item i {
-    padding-right: 0.5rem;
-}
-
-.post-metadata-item:last-of-type {
-    padding-right: 0;
-}
 
 
 ////// MAIN CONTENT
@@ -982,27 +1019,40 @@ table:not(.lntable) {
     flex-direction: column;
     justify-content: space-between;
 
+    .bullet-item {
+        display: block;
+        padding: 0 2rem;
+
+        .bullet-metadata-items {
+            padding: 0;
+            display: flex;
+            flex-flow: row wrap;
+
+            .bullet-metadata-item {
+                display: inline-block;
+                
+                .fontawesome {
+                    padding-right: 0.3rem;
+                    height: 0.9em;
+                    width: 0.9em;
+                    top: 0.09rem;
+                }
+
+            }
+
+            .bullet-metadata-title {
+                flex: 666;
+            }
+        }
+    }
 }
 
-.bullet-item {
-    display: block;
-    padding: 0 2rem;
-}
 
-.bullet-metadata-items {
 
-    padding: 0;
-    display: flex;
-    flex-flow: row wrap;
-}
 
-.bullet-metadata-item {
-    display: inline-block;
-}
 
-.bullet-metadata-title {
-    flex: 666;
-}
+
+
 
 
 .pagination {
@@ -1056,6 +1106,13 @@ table:not(.lntable) {
     @include toggle-navbar {
         display: flex;
     }
+
+    .fontawesome {
+        height: 1.0rem;
+        width: 1.0rem;
+        top: 0.18rem;
+    }
+
 }
 
 .post-nav a {
@@ -1080,8 +1137,13 @@ table:not(.lntable) {
     text-align: right;
 }
 
-
-
+.fontawesome {
+    display: inline-block;
+    height: 1.15rem;
+    width: 1.15rem;
+    top: 0.15rem;
+    position: relative;
+}
 
 // TAXONOMY PAGE CONTENT (GENERATED ON THE FLY)
 .terms {

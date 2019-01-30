@@ -1,15 +1,71 @@
-{{ if or .Paginator.HasPrev .Paginator.HasNext }}
-
-<div class="pages">
-    {{ if .Paginator.HasPrev }}
-    <a class="icon pages-icon" href="{{ .Paginator.Prev.URL }}" rel="prev">
-        <i class="fa fa-arrow-left"></i>
-    </a>
-    {{ end }} {{ if .Paginator.HasNext }}
-    <a class="icon pages-icon" href="{{ .Paginator.Next.URL }}" rel="next">
-        <i class="fa fa-arrow-right"></i>
-    </a>
+{{- $pag := $.Paginator -}}
+{{- if gt $pag.TotalPages 1 -}}
+<ul class="pagination">
+    {{ with $pag.First }}
+    <li class="page-item left">
+        {{- if $pag.HasPrev }}
+        <a href="{{ .URL }}" class="page-link" aria-label="First" title="First">
+            <span aria-hidden="true">{{ partial "util/fontawesome.html" "fast-backward-solid" }}</span>
+        </a>
+        {{- else }}
+            <span aria-hidden="true">{{ partial "util/fontawesome.html" "fast-backward-solid" }}</span>
+        {{- end }}
+    </li>
     {{ end }}
-</div>
-
+    <li class="page-item left">
+      {{- if $pag.HasPrev }}
+      <a href="{{ $pag.Prev.URL }}" class="page-link" aria-label="Previous" title="Previous">
+          <span aria-hidden="true">{{ partial "util/fontawesome.html" "backward-solid" }}</span>
+      </a>
+      {{- else }}
+      <span aria-hidden="true">{{ partial "util/fontawesome.html" "backward-solid" }}</span>
+      {{- end }}
+    </li>
+    <li class="page-item-spacer"></li>
+    {{- $.Scratch.Set "__paginator.ellipsed" false -}}
+    {{- range $pag.Pagers -}}
+    {{- $right := sub .TotalPages .PageNumber -}}
+    {{- $showNumber := or (le .PageNumber 3) (eq $right 0) -}}
+    {{- $showNumber := or $showNumber (and (gt .PageNumber (sub $pag.PageNumber 2)) (lt .PageNumber (add $pag.PageNumber 2))) -}}
+    {{- if $showNumber -}}
+        {{- $.Scratch.Set "__paginator.ellipsed" false -}}
+        {{- $.Scratch.Set "__paginator.shouldEllipse" false -}}
+    {{- else -}}
+        {{- $.Scratch.Set "__paginator.shouldEllipse" (not ($.Scratch.Get "__paginator.ellipsed") ) -}}
+        {{- $.Scratch.Set "__paginator.ellipsed" true -}}
+    {{- end -}}
+    {{- if $showNumber }}
+    <li class="page-item">
+        {{- if ne . $pag -}}
+        <a class="page-link" href="{{ .URL }}" title="Page {{ .PageNumber }} of {{ .TotalPages }}">{{ .PageNumber }}</a>
+        {{- else }}
+        <span class="page-active">{{ .PageNumber }}</span>
+        {{- end }}
+    </li>
+    {{- else if ($.Scratch.Get "__paginator.shouldEllipse") }}
+    <li class="page-item disabled"><span aria-hidden="true">&nbsp;&hellip;&nbsp;</span></li>
+    {{- end -}}
+    {{- end }}
+    <li class="page-item-spacer"></li>
+    <li class="page-item right">
+        {{- if $pag.HasNext }}
+        <a href="{{ $pag.Next.URL }}" class="page-link" aria-label="Next" title="Next">
+            <span aria-hidden="true">{{ partial "util/fontawesome.html" "forward-solid" }}</span>
+        </a>
+        {{- else }}
+        <span aria-hidden="true">{{ partial "util/fontawesome.html" "forward-solid" }}</span>
+        {{- end }}
+    </li>
+    {{ with $pag.Last }}
+    <li class="page-item right">
+        {{- if $pag.HasNext }}
+        <a href="{{ .URL }}" class="page-link" aria-label="Last" title="Last">
+            <span aria-hidden="true">{{ partial "util/fontawesome.html" "fast-forward-solid" }}</span>
+        </a>
+        {{- else }}
+        <span aria-hidden="true">{{ partial "util/fontawesome.html" "fast-forward-solid" }}</span>
+        {{- end }}
+    </li>
+    {{ end }}
+</ul>
 {{ end }}

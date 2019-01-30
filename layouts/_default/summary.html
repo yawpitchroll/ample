@@ -1,22 +1,22 @@
 <li class="summary">
     <hr>
-    <a href="{{ relURL .Permalink }}">
+    <a href="{{ relURL .Permalink }}" title="{{ .Title }}">
         <article class="summary-content">
             <header class="summary-header">
                 <div class="summary-metadata">
                     <ul class="summary-metadata-items">
                         {{- with .Params.date }}
                         <li class="summary-metadata-item">
-                            <i class="fab fa-calendar-alt"></i>{{ partial "util/date.html" . | chomp }}
+                            {{ partial "util/fontawesome.html" "calendar-alt-regular" }}{{ partial "util/date.html" . | chomp }}
                         </li>
                         {{- end }}
-                        {{- $icon := cond (gt .WordCount 2000) "fas fa-book" "far fa-file-alt" -}}
+                        {{- $icon := cond (gt .WordCount 2000) "book-solid" "file-alt-solid" -}}
                         <li class="summary-metadata-item">
-                            <i class="{{ $icon }}"></i>{{ .WordCount }} words
+                            {{ partial "util/fontawesome.html" $icon }}{{ .WordCount }} words
                         </li>
                         {{- $mins := cond (eq .ReadingTime 1) "min" "mins" -}}
                         <li class="summary-metadata-item">
-                            <i class="far fa-clock"></i>{{ .ReadingTime }} {{ $mins }}
+                            {{ partial "util/fontawesome.html" "clock-solid" }}{{ .ReadingTime }} {{ $mins }}
                         </li>
                     </ul>
                 </div>

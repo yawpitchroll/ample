@@ -28,5 +28,5 @@ Home | {{ (.Scratch.Get "branding").title }}
 {{ end }}
 
 {{- define "footer" -}}
-{{ partial "paginator2.html" . | chomp }}
+{{ partial "paginator.html" . | chomp }}
 {{- end }}

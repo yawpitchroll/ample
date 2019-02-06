@@ -1,10 +1,10 @@
-{{ define "title" }}
-{{ if not .IsHome }}
+{{- define "title" -}}
+{{- if not .IsHome -}}
 {{ .Title }} | {{ (.Scratch.Get "branding").title }}
-{{ else }}
+{{- else -}}
 Home | {{ (.Scratch.Get "branding").title }}
-{{ end }}
-{{ end }}
+{{- end -}}
+{{- end -}}
 
 {{ define "main" }}
 <section class="main-content">

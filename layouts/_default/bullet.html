@@ -6,7 +6,7 @@
             </li>
             {{- with .Params.date }}
             <li class="bullet-metadata-item">
-                {{- partial "util/fontawesome.html" "calendar-alt-regular" -}}{{ partial "util/date.html" . | chomp }}
+                {{ partial "util/published.html" . | chomp }}
             </li>
             {{- end }}
             {{- $icon := cond (gt .WordCount 2000) "book-solid" "file-alt-solid" -}}

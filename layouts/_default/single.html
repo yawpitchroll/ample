@@ -29,3 +29,9 @@
 {{ partial "post/navigation.html" . | chomp }}
 {{- end }}
 {{- end }}
+
+{{- define "sidebar" -}}
+{{- if not .Params.nav_off -}}
+{{ partial "post/sidebar.html" . | chomp }}
+{{- end }}
+{{- end }}

@@ -7,7 +7,7 @@
                     <ul class="summary-metadata-items">
                         {{- with .Params.date }}
                         <li class="summary-metadata-item">
-                            {{ partial "util/fontawesome.html" "calendar-alt-regular" }}{{ partial "util/date.html" . | chomp }}
+                            {{ partial "util/published.html" . | chomp }}
                         </li>
                         {{- end }}
                         {{- $icon := cond (gt .WordCount 2000) "book-solid" "file-alt-solid" -}}

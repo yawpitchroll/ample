@@ -194,17 +194,21 @@ code {
 //// COMMON ELEMENT STYLING
 /// INLINE ELEMENTS
 // links
-a {
-    transition: 200ms;
+%hover-transition {
     transition-timing-function: ease-in-out;
+    transition: 200ms;
+}
+
+a {
 
     color: $branding-accent;
+    border-bottom: 1px dotted transparent;
     text-decoration: none;
 
     &:hover {
+        @extend %hover-transition;
         color: lighten($branding-accent, 20%);
-        text-decoration: underline;
-        text-decoration-style: dotted;
+        border-bottom-color: lighten($branding-accent, 20%);
     }
 }
 
@@ -357,6 +361,7 @@ blockquote {
 /// SITE COMMON HELPERS
 // branded links
 %brand-hover {
+    @extend %hover-transition;
     color: $branding-accent;
     text-decoration: none;
 }
@@ -499,6 +504,18 @@ blockquote {
     }
 }
 
+.post-sidebar {
+    display: flex;
+    flex-flow: column nowrap;
+    font-size: 0.9rem;
+    
+    @include toggle-navbar {
+        display: none;
+    }
+
+}
+
+
 /// MAIN PAGE CONTENT
 .site-content {
     margin: 0 auto;
@@ -535,8 +552,8 @@ blockquote {
     padding: 1rem;
 
     @include toggle-navbar {
-        padding-left: 0;
-        padding-right: 0;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
     }
 
     // social link items
@@ -610,17 +627,16 @@ blockquote {
     padding-top: 0.2rem;
     font-size: 0.70em;
     text-transform: uppercase;
-    color: white;
-
-    @include toggle-navbar {
-        //font-size: 0.7rem;
-    }   
+    color: #eee;
 
     a {
-        color: white;
+        color: #eee;
+        border-bottom: 1px dotted transparent;
 
         &:hover {
-            text-decoration: underline;
+            @extend %hover-transition;
+            color: #fff;
+            border-bottom: 1px dotted white;
         }
     }  
 
@@ -644,13 +660,6 @@ blockquote {
 
         &:last-of-type {
             padding-right: 0;
-        }
-
-        .fontawesome {
-            padding-right: 0.3rem;
-            height: 0.9em;
-            width: 0.9em;
-            top: 0.09rem;
         }
     }
 }
@@ -859,7 +868,7 @@ blockquote {
             color: #99a1a7;
 
             &:after {
-                content: '\2714';
+                content: '\2713';
                 font-size: 3em;
                 position: absolute;
                 top: 0.1em;
@@ -1000,17 +1009,10 @@ table:not(.lntable) {
 
 
 
-.left {
-    text-align: left;
-}
-
-.right {
-    text-align: right;
-}
 
 .bullets {
     @extend %font-brand;
-    font-size: 0.9rem;
+    font-size: 0.8em;
     text-transform: uppercase;
     color: #ddd;
 
@@ -1029,19 +1031,15 @@ table:not(.lntable) {
             flex-flow: row wrap;
 
             .bullet-metadata-item {
-                display: inline-block;
-                
-                .fontawesome {
-                    padding-right: 0.3rem;
-                    height: 0.9em;
-                    width: 0.9em;
-                    top: 0.09rem;
-                }
+                display: block;
+                font-size: 0.8em;
 
             }
 
             .bullet-metadata-title {
+                text-align: left;
                 flex: 666;
+                font-size: 1.2em;
             }
         }
     }
@@ -1060,7 +1058,7 @@ table:not(.lntable) {
     font-size: 0.9rem;
     text-transform: uppercase;
     margin-top: 1rem;
-    display: none;
+    display: flex;
     justify-content: space-between;
     color: #ddd;
     padding: 0;
@@ -1068,14 +1066,14 @@ table:not(.lntable) {
     text-align: center;
 
     @include toggle-navbar {
-        display: flex;
+        //display: flex;
     }
 }
 
 .pagination a {
     color: $branding-fill;
     font-weight: bold;
-    text-decoration: none
+    border: none;
 }
 
 .pagination a:hover {
@@ -1117,7 +1115,7 @@ table:not(.lntable) {
 
 .post-nav a {
     color: $branding-fill;
-    text-decoration: none
+    border: none;
 }
 
 .post-nav-title {
@@ -1137,13 +1135,51 @@ table:not(.lntable) {
     text-align: right;
 }
 
+
+
+
 .fontawesome {
     display: inline-block;
-    height: 1.15rem;
-    width: 1.15rem;
-    top: 0.15rem;
+    height: auto;
+    width: 1.15em;
+    top: 0.15em;
     position: relative;
+
+    &.calendar-solid {
+        width: 0.8em;
+        top: 0.06em;
+    }
+
+    &.folder-open-solid {
+        width: 1.3em;
+        top: 0.20em;
+        left: -0.22em;
+    }
+
+    &.tag-solid {
+        width: 0.9em;
+        top: 0.09em;
+        left: -0.10em;
+    }
+
+    &.file-alt-solid {
+        width: 0.7em;
+        top: 0.08em;
+    }
+
+    &.book-solid {
+        width: 0.8em;
+        top: 0.12em;
+    }
+
+    &.clock-solid {
+        width: 0.98em;
+        top: 0.12em;
+        left: -0.10em;
+    }
+
 }
+
 
 // TAXONOMY PAGE CONTENT (GENERATED ON THE FLY)
 .terms {
@@ -1173,7 +1209,7 @@ table:not(.lntable) {
 {{- $selector := printf ".%s-%d" $taxon $count -}}
 {{ $selector }} {
     display: block;
-    padding: 0 0.3rem;
+    padding: 0.8rem 0.3rem;
     font-size: 0.6rem * {{ $dnorm }};
 
     @include toggle-navbar {

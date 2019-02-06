@@ -1,0 +1,26 @@
+{{- if .Site.Params.post_navigation }}
+{{- if or (.PrevInSection) (.NextInSection) }}
+<div class="post-sidebar">
+	<div class="post-sidebar-prev">
+	{{- if .PrevInSection }}
+        <a href="{{ .PrevInSection.RelPermalink }}" rel="prev" title="{{ .PrevInSection.Title }}">
+            {{ partial "util/fontawesome.html" "backward-solid" }}
+			<span class="post-sidebar-title">"{{ .PrevInSection.Title | truncate 30 }}"</span>
+		</a>
+    {{- else }}
+        {{ partial "util/fontawesome.html" "backward-solid" }}
+	{{- end }}
+	</div>
+	<div class="post-sidebar-next">
+	{{- if .NextInSection }}
+        <a href="{{ .NextInSection.RelPermalink }}" rel="next" title="{{ .NextInSection.Title }}">
+			<span class="post-sidebar-title">"{{ .NextInSection.Title | truncate 30 }}"</span>
+            {{ partial "util/fontawesome.html" "forward-solid" }}
+		</a>
+    {{- else }}
+        {{ partial "util/fontawesome.html" "forward-solid" }}
+	{{- end }}
+	</div>
+</div>
+{{- end }}
+{{- end }}

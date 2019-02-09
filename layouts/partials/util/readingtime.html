@@ -1,0 +1,2 @@
+{{- $mins := cond (eq .ReadingTime 1) "min" "mins" -}}
+{{ partial "util/fontawesome.html" "clock-solid" }}{{ .ReadingTime }} {{ $mins }}

@@ -1,27 +1,25 @@
-<ul class="post-metadata-items">
+<ul class="items">
     {{- with .Params.date }}
-    <li class="post-metadata-item">
+    <li class="item">
         {{ partial "util/published.html" . | chomp }}
     </li>
     {{- end }}
     {{- with .Params.categories -}}
     {{- $links := apply (apply (sort .) "partial" "util/category.html" ".") "chomp" "." }}
-    <li class="post-metadata-item">
+    <li class="item">
         {{ partial "util/fontawesome.html" "folder-open-solid" }}{{ delimit $links ", " " & " }}
     </li>
     {{- end }}
     {{- with .Params.tags -}}
     {{- $links := apply (apply (sort .) "partial" "util/tag.html" ".") "chomp" "." }}
-    <li class="post-metadata-item">
+    <li class="item">
         {{ partial "util/fontawesome.html" "tag-solid" }}{{ delimit $links ", " " & " }}
     </li>
     {{- end }}
-    {{- $icon := cond (gt .WordCount 2000) "book-solid" "file-alt-solid" -}}
-    <li class="post-metadata-item">
-        {{ partial "util/fontawesome.html" $icon }}{{ .WordCount }} words
+    <li class="item">
+        {{ partial "util/wordcount.html" . | chomp }}
     </li>
-    {{- $mins := cond (eq .ReadingTime 1) "min" "mins" -}}
-    <li class="post-metadata-item">
-        {{ partial "util/fontawesome.html" "clock-solid" }}{{ .ReadingTime }} {{ $mins }}
+    <li class="item">
+        {{ partial "util/readingtime.html" . | chomp }}
     </li>
 </ul>

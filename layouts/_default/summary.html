@@ -1,35 +1,32 @@
 <li class="summary">
-    <hr>
     <a href="{{ relURL .Permalink }}" title="{{ .Title }}">
-        <article class="summary-content">
-            <header class="summary-header">
-                <div class="summary-metadata">
-                    <ul class="summary-metadata-items">
+        <article class="content">
+            <header class="header">
+                <div class="metadata">
+                    <ul class="items">
                         {{- with .Params.date }}
-                        <li class="summary-metadata-item">
+                        <li class="item">
                             {{ partial "util/published.html" . | chomp }}
                         </li>
                         {{- end }}
-                        {{- $icon := cond (gt .WordCount 2000) "book-solid" "file-alt-solid" -}}
-                        <li class="summary-metadata-item">
-                            {{ partial "util/fontawesome.html" $icon }}{{ .WordCount }} words
+                        <li class="item">
+                            {{ partial "util/wordcount.html" . | chomp }}
                         </li>
-                        {{- $mins := cond (eq .ReadingTime 1) "min" "mins" -}}
-                        <li class="summary-metadata-item">
-                            {{ partial "util/fontawesome.html" "clock-solid" }}{{ .ReadingTime }} {{ $mins }}
+                        <li class="item">
+                            {{ partial "util/readingtime.html" . | chomp }}
                         </li>
                     </ul>
                 </div>
-                <h1 class="summary-title">{{.Title}}</h1>
+                <h1 class="title">{{.Title}}</h1>
             </header>
-            <div class="summary-body">
+            <div class="body">
                 <p>{{.Summary | plainify | htmlUnescape }}</p>
             </div>
-            {{ if .Truncated }}
-            <footer class="summary-readmore">
+            {{- if .Truncated -}}
+            <footer class="readmore">
                 Read More...
             </footer>
-            {{ end }}
+            {{- end }}
         </article>
     </a>
 </li>

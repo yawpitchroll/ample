@@ -8,16 +8,18 @@
         <title>{{- block "title" . -}}{{- .Param "Title" -}} | {{- (.Scratch.Get "branding").title | chomp -}}{{- end -}}</title>
         {{ partial "head_custom.html" . | chomp }}
         {{ .Hugo.Generator }}
+        <link rel="canonical" href="{{ .Permalink }}">
         {{ partialCached "amp/boilerplate.html" . | chomp }}
         {{ partial "amp/custom.html" . | chomp }}
         <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
         <script async custom-element="amp-accordion" src="https://cdn.ampproject.org/v0/amp-accordion-0.1.js"></script>    
     </head>
     <body>
+    {{- block "body" . -}}
         <header class="navbar">
             {{- with .Scratch.Get "branding" }}
             <a class="branding" href="/" title="Home">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 158.75 158.75"><path d="M33.143 44.418c-2.585 1.685-4.272 2.904-4.531 3.354-.17.295-.32 1.305-.451 2.821C46.4 60.65 72.47 76.161 73.684 78.265c1.26 2.181 1.641 34.696 1.154 55.504 2.408 1.204 4.059 1.927 4.537 1.927.522 0 2.44-.86 5.22-2.27-.471-20.827-.085-52.867 1.164-55.032 1.2-2.078 26.668-17.248 44.872-27.311-.14-1.8-.304-2.984-.493-3.311-.26-.45-1.946-1.668-4.53-3.354C107.788 55.16 81.783 69.71 79.376 69.71c-2.407 0-28.412-14.55-46.233-25.291zM79.375 4.45c-3.631 0-61.083 33.17-62.899 36.314-1.815 3.145-1.815 69.485 0 72.63 1.816 3.145 59.268 36.314 62.9 36.314 3.63 0 61.082-33.17 62.898-36.314 1.815-3.145 1.815-69.485 0-72.63-1.816-3.145-59.267-36.314-62.899-36.314zm0 7.384c3.263 0 54.873 29.797 56.504 32.622 1.631 2.826 1.631 62.42 0 65.246-1.63 2.825-53.241 32.623-56.504 32.623-3.262 0-54.873-29.798-56.504-32.623-1.631-2.825-1.631-62.42 0-65.246 1.63-2.825 53.242-32.622 56.504-32.622z"/></svg>
+                {{ partial "util/logo.html" . | chomp }} 
                 {{ .title }}
             </a>
             {{- end }}
@@ -48,7 +50,6 @@
             </nav>
         </amp-sidebar>
 
-
         <div class="site-content">
             <main class="site-main">
                 {{- block "main" . -}}
@@ -59,24 +60,12 @@
                 {{- end }}
                 <hr/>
                 {{- partial "foot_custom.html" . | chomp }}
-                <nav>
-                    <ul class="social-items">
-                        {{- if .Site.Menus.icon -}}
-                        {{- range sort .Site.Menus.icon }}
-                        <li class="social-item">
-                            <a href="{{ .URL }}" {{ if .Title -}}title="{{ .Title }}"{{ end }}>{{- partial "util/fontawesome.html" .Name -}}</a>
-                        </li>
-                        {{- end -}}
-                        {{ end }}
-                        <li class="social-item">
-                            <a href="{{ .RSSLink }}" title="Subscribe by RSS">{{- partial "util/fontawesome.html" "rss-square-solid" -}}</i></a>
-                        </li>
-                    </ul>
-                </nav>
+                {{- partial "social.html" . | chomp }} 
                 {{- with .Site.Params.footer -}}
                 <p class="copyright">{{ . | markdownify }}</p>
                 {{- end }}
             </footer>
         </div>
+    {{- end -}}
     </body>
 </html>

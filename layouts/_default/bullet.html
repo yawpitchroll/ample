@@ -1,23 +1,12 @@
-<li class="bullet-item">
+<li class="bullet">
 	<a href="{{ .URL }}">
-        <ul class="bullet-metadata-items">
-            <li class="bullet-metadata-item bullet-metadata-title" title="{{ .Title }}">
-                {{ .Title | truncate 40 }}
-            </li>
-            {{- with .Params.date }}
-            <li class="bullet-metadata-item">
-                {{ partial "util/published.html" . | chomp }}
-            </li>
-            {{- end }}
-            {{- $icon := cond (gt .WordCount 2000) "book-solid" "file-alt-solid" -}}
-            <li class="bullet-metadata-item">
-                {{ partial "util/fontawesome.html" $icon }}{{ .WordCount }} words
-            </li>
-            {{- $mins := cond (eq .ReadingTime 1) "min" "mins" -}}
-            <li class="bullet-metadata-item">
-                {{ partial "util/fontawesome.html" "clock-solid" }}{{ .ReadingTime }} {{ $mins }}
-            </li>
-        </ul>
+       {{- with .Params.date }}
+       <span class="date">
+           {{ partial "util/published.html" . | chomp }}
+       </span>
+       {{- end }}
+       <span class="title" title="{{ .Title }}">
+           {{ .Title | truncate 60 }}
+       </span>
     </a>
 </li>
-

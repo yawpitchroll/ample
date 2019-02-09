@@ -1,0 +1,14 @@
+<address class="social">
+    <ul class="social-items">
+        {{- if .Site.Menus.icon -}}
+        {{- range sort .Site.Menus.icon }}
+        <li class="social-item">
+            <a href="{{ .URL }}" {{ if .Title -}}title="{{ .Title }}"{{ end }}>{{- partial "util/fontawesome.html" .Name -}}</a>
+        </li>
+        {{- end -}}
+        {{ end }}
+        <li class="social-item">
+            <a href="{{ .RSSLink }}" title="Subscribe by RSS">{{- partial "util/fontawesome.html" "rss-square-solid" -}}</i></a>
+        </li>
+    </ul>
+</address>

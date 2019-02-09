@@ -2,9 +2,9 @@
 {{- if gt $pag.TotalPages 1 -}}
 <ul class="pagination">
     {{ with $pag.First }}
-    <li class="page-item left">
+    <li class="item">
         {{- if $pag.HasPrev }}
-        <a href="{{ .URL }}" class="page-link" aria-label="First" title="First">
+        <a href="{{ .URL }}" aria-label="First" title="First">
             <span aria-hidden="true">{{ partial "util/fontawesome.html" "fast-backward-solid" }}</span>
         </a>
         {{- else }}
@@ -12,16 +12,16 @@
         {{- end }}
     </li>
     {{ end }}
-    <li class="page-item left">
+    <li class="item">
       {{- if $pag.HasPrev }}
-      <a href="{{ $pag.Prev.URL }}" class="page-link" aria-label="Previous" title="Previous">
+      <a href="{{ $pag.Prev.URL }}" aria-label="Previous" title="Previous">
           <span aria-hidden="true">{{ partial "util/fontawesome.html" "backward-solid" }}</span>
       </a>
       {{- else }}
       <span aria-hidden="true">{{ partial "util/fontawesome.html" "backward-solid" }}</span>
       {{- end }}
     </li>
-    <li class="page-item-spacer"></li>
+    <li class="spacer"></li>
     {{- $.Scratch.Set "__paginator.ellipsed" false -}}
     {{- range $pag.Pagers -}}
     {{- $right := sub .TotalPages .PageNumber -}}
@@ -35,21 +35,21 @@
         {{- $.Scratch.Set "__paginator.ellipsed" true -}}
     {{- end -}}
     {{- if $showNumber }}
-    <li class="page-item">
+    <li class="item">
         {{- if ne . $pag -}}
-        <a class="page-link" href="{{ .URL }}" title="Page {{ .PageNumber }} of {{ .TotalPages }}">{{ .PageNumber }}</a>
+        <a href="{{ .URL }}" title="Page {{ .PageNumber }} of {{ .TotalPages }}">{{ .PageNumber }}</a>
         {{- else }}
-        <span class="page-active">{{ .PageNumber }}</span>
+        <span class="active">{{ .PageNumber }}</span>
         {{- end }}
     </li>
     {{- else if ($.Scratch.Get "__paginator.shouldEllipse") }}
-    <li class="page-item disabled"><span aria-hidden="true">&nbsp;&hellip;&nbsp;</span></li>
+    <li class="item"><span aria-hidden="true">&nbsp;&hellip;&nbsp;</span></li>
     {{- end -}}
     {{- end }}
-    <li class="page-item-spacer"></li>
-    <li class="page-item right">
+    <li class="spacer"></li>
+    <li class="item">
         {{- if $pag.HasNext }}
-        <a href="{{ $pag.Next.URL }}" class="page-link" aria-label="Next" title="Next">
+        <a href="{{ $pag.Next.URL }}" aria-label="Next" title="Next">
             <span aria-hidden="true">{{ partial "util/fontawesome.html" "forward-solid" }}</span>
         </a>
         {{- else }}
@@ -57,9 +57,9 @@
         {{- end }}
     </li>
     {{ with $pag.Last }}
-    <li class="page-item right">
+    <li class="item">
         {{- if $pag.HasNext }}
-        <a href="{{ .URL }}" class="page-link" aria-label="Last" title="Last">
+        <a href="{{ .URL }}" aria-label="Last" title="Last">
             <span aria-hidden="true">{{ partial "util/fontawesome.html" "fast-forward-solid" }}</span>
         </a>
         {{- else }}

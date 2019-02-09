@@ -1,23 +1,17 @@
 {{- define "title" -}}
-{{- if not .IsHome -}}
-{{ .Title }} | {{ (.Scratch.Get "branding").title }}
-{{- else -}}
-Home | {{ (.Scratch.Get "branding").title }}
-{{- end -}}
+{{ .Title | default (title .Type) }} | {{ (.Scratch.Get "branding").title }}
 {{- end -}}
 
 {{ define "main" }}
 <section class="main-content">
     <header class="main-header">    
-        {{if not .IsHome }}
-        <h1 class="title">{{ .Title }}</h1>
-        {{ end }}
+        <h1 class="title">{{ .Title | default (title .Type) }}</h1>
     </header>
     <section class="list-content">
         {{ .Content }}
         <nav>
             <ul class="summaries">
-                {{ $paginator := .Paginate (where .Data.Pages "Type" "!=" "page") }}
+                {{ $paginator := .Paginate (where .Data.Pages "Type" "==" .Type) }}
                 {{ range $paginator.Pages }}
                 {{ .Render "summary" }}
                 {{ end }}

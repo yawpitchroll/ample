@@ -1,8 +1,14 @@
+{{ define "amp-elements" }}
+{{- if (eq .Type "posts") }}
+<script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
+{{- end }}
+{{ end }}
+
 {{ define "main" }}
 <article class="main-content">
 <header class="main-header">
     <h1 class="title">{{ .Title }}</h1>
-    {{- if (eq .Type "posts" ) -}}
+    {{- if (eq .Type "posts") -}}
     <div class="post-metadata">
         {{ partial "post/metadata.html" . | chomp }}
     </div>
@@ -22,6 +28,27 @@
     </ul>
 </aside>
 {{ end }}
+
+{{- if (eq .Type "posts") }}
+<div class="post-share">
+    <span class="title">Share this post</span>
+    <ul class="items">
+        <li class="item">
+            <amp-social-share type="facebook" title="Share on Facebook" data-param-app_id="254325784911610" height=2rem width=2rem></amp-social-share></li>
+        <li class="item">
+            <amp-social-share type="twitter" title="Share on Twitter" height=2rem width=2rem></amp-social-share></li>
+        <li class="item">
+            <amp-social-share type="linkedin" title="Share on Linkedin" height=2rem width=2rem></amp-social-share></li>
+        <li class="item">
+            <amp-social-share type="email" title="Share in an email" height=2rem width=2rem data-target="_self"></amp-social-share></li>
+        <li class="item">
+            <amp-social-share type="whatsapp" title="Share on WhatsApp" height=2rem width=2rem></amp-social-share></li>
+        <li class="item link">
+            <a title="Right click to copy the link for &ldquo;{{ .Title }}&rdquo;" href="{{ .Permalink }}" target="_blank">{{ .Permalink }}</a>
+        </li>
+
+</div>
+{{- end }}
 
 </article>
 {{ end }}

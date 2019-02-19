@@ -4,12 +4,12 @@
 
 //// INJECT CODE HIGHLIGHTING
 // TODO: Figure out a way to disable this if pigmentsUseClasses is disabled
-@import "{{ .Site.Params.Ample.syntaxStyle | default "light" }}";
+@import "{{ .Site.Params.Ample.Style.syntaxHighlightMode | default "light" }}";
 
 
 //// COMMON VARIABLES & HUGO CONFIGURATION
 /* variables used throughout the style sheet */
-$branding-accent: {{ (.Scratch.Get "branding").accent }};
+$branding-accent: {{ .Site.Params.Ample.Style.accentColor | default "#0379C4" }};
 
 $small-font: 0.875em;   // 14px
 $large-font: 1.375em;   // 22px
@@ -197,11 +197,40 @@ code {
     transition: 200ms;
 }
 
-a {
+// accessability focus
+%focus-outline {
+    outline: 4px dotted $branding-accent;
+    outline-offset: 0.2rem;
+}
 
+// accesability focus when on dark
+%focus-inverted {
+    @extend %focus-outline;
+    outline-color: white;
+}
+
+// branded links
+%brand-hover {
+    @extend %hover-transition;
+    color: $branding-accent;
+    text-decoration: none;
+    border: none;
+}
+
+// branded links with svg elements
+%brand-hover-svg {
+    @extend %brand-hover;
+    fill: $branding-accent;
+}
+
+a {
     color: $branding-accent;
     border-bottom: 1px dotted transparent;
     text-decoration: none;
+
+    &:focus {
+        @extend %focus-outline;
+    }
 
     &:hover {
         @extend %hover-transition;
@@ -354,177 +383,76 @@ blockquote {
     }
 }
 
-
-//// SITE-WIDE STRUCTURAL ELEMENTS
-/// SITE COMMON HELPERS
-// branded links
-%brand-hover {
-    @extend %hover-transition;
-    color: $branding-accent;
-    text-decoration: none;
-    border: none;
+/// COMMON ELEMENTS
+// accessability elements and links
+.screen-reader {
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
 }
 
-// branded links with svg elements
-%brand-hover-svg {
-    @extend %brand-hover;
-    fill: $branding-accent;
+.screen-reader-focusable:active,
+.screen-reader-focusable:focus {
+	clip: auto;
+	height: auto;
+	margin: 0;
+	overflow: visible;
+	position: static;
+	white-space: normal;
+	width: auto;
 }
 
-/// NAVBAR & SIDEBAR
-%header-bar {
-    position: fixed;
-    z-index: 10000;
-    top: 0;
-    left: 0;
-    min-height: 3.6rem;
-    height: 3.6rem;
-    width: 100%;
-    box-shadow: 0 0.2rem 0.02rem rgba(#777, 0.3);
-    font-size: 1.2rem;
-}
+// icons used in various locations
+/*! icons by fontawesome | https://fontawesome.com/license/free */
+.fontawesome {
+    display: inline-block;
+    height: auto;
+    width: 1.15em;
+    top: 0.15em;
+    position: relative;
 
-// fixed top navbar
-.navbar {
-    @extend %header-bar;
-    @extend %font-brand;
-    background: white;
-    fill: black;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    // navbar links
-    a {
-        color: black;
-
-        &:hover {
-            @extend %brand-hover-svg;
-        }
+    &.calendar-solid {
+        width: 0.8em;
+        top: 0.06em;
     }
 
-    // navbar logo and site name
-    .branding {
-       flex: 1 0 0;
-       padding-left: 2rem;
-       text-align: left;
-    
-       svg {
-           height: 1.2rem;
-           width: auto;
-           vertical-align: middle;
-           padding-bottom: 0.10rem;
-       }
+    &.folder-open-solid {
+        width: 1.3em;
+        top: 0.20em;
+        left: -0.18em;
     }
 
-    // navbar text links (large screens)
-    .items {
-        flex: 1 0 0;
-        padding-right: 2rem;
-        display: none;
-        text-align: right;
-
-        @include toggle-navbar {
-            display: inline-block;
-        }
-
-        .item {
-            display: inline-block;
-        }
+    &.tag-solid {
+        width: 0.9em;
+        top: 0.09em;
+        left: -0.10em;
     }
 
-    // navbar toggle for sidebar (small screens)
-    .toggle {
-        flex: 1 0 0;
-        padding-right: 2rem;
-        display: inline-block;
-        text-align: right;
-        cursor: pointer;
+    &.file-alt-solid {
+        width: 0.7em;
+        top: 0.08em;
+    }
 
-        @include toggle-navbar {    
-            display: none;
-        }
+    &.book-solid {
+        width: 0.8em;
+        top: 0.10em;
+    }
 
-        &:hover {
-            @extend %brand-hover-svg;
-        }
+    &.clock-solid {
+        width: 0.98em;
+        top: 0.12em;
+        left: -0.10em;
     }
 }
 
-// sliding sidebar (small screens only)
-.sidebar {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background: rgba(white, 0.9);
-    text-align: right;
-    width: 100%;
-    height: 100vh;
-    overflow-y: hidden;
-
-    a {
-        color: black;
-
-        &:hover {
-            @extend %brand-hover-svg;
-        }
-    }
-
-    // sidebar header
-    .head {
-        @extend %header-bar;
-        background: white;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-
-        .toggle {
-            padding-right: 2rem;
-            cursor: pointer;
-            flex: 1 0 0;
-            text-align: right;
-            font-size: 1.65rem;
-
-            &:hover {
-               @extend %brand-hover-svg;
-            }
-        }
-    }
-
-    nav {
-        position: fixed;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        overflow-y: auto;
-    }
-
-    // sidebar items
-    .items {
-        padding-top: 3.6rem;
-        padding-right: 2rem;
-        font-size: 1.65rem;
-        line-height: 1.5;
-
-        .item {
-            display: block
-        }
-    }
-
-    // sidebar post navigation
-    .previous,
-    .next {
-        padding-left: 1rem;
-        padding-right: 2rem;
-        font-size: 2.25em;
-        line-height: 1.5;
-        color: #ddd;
-    }
-}
-
-/// SPLASH PAGE CONTENT
-
+//// SPLASH PAGE CONTENT (index.html & 404.html)
+// splash page animations
 /* ----------------------------------------------
  * Generated by Animista on 2019-2-7 19:59:43
  * w: http://animista.net, t: @cssanimista
@@ -668,6 +596,7 @@ blockquote {
   }
 }
 
+// splash page layout
 .splash {
     overflow-y: hidden;
 
@@ -684,6 +613,7 @@ blockquote {
     }
 }
 
+// main splash content
 .splash-main {
     display: flex;
     flex-direction: column;
@@ -696,6 +626,7 @@ blockquote {
             @extend %brand-hover-svg;
         }
     }
+
 
     // navbar logo and site name
     .branding {
@@ -714,8 +645,10 @@ blockquote {
 
         }
 
-        .enter {
+        .entry-text {
             @extend %font-brand;
+            font-size: 1.2em;
+            line-height: 1;
             font-weight: 500;
             letter-spacing: 0.3em;
             text-align: center;
@@ -740,10 +673,198 @@ blockquote {
     }
 }
 
+// 404 only
+.splash-main.error {
+    a {
+        color: crimson;
+        fill: crimson;
+     
+        &:hover {
+            @extend %brand-hover-svg;
+        }
+    }
+}
 
+//// BASEOF PAGE CONTENT (COMMON TO ALL NON-SPLASH PAGES)
+// fixed top-of page elements
+%header-bar {
+    position: fixed;
+    z-index: 10000;
+    top: 0;
+    left: 0;
+    min-height: 3.6rem;
+    height: 3.6rem;
+    width: 100%;
+    box-shadow: 0 0.2rem 0.02rem rgba(#777, 0.3);
+    font-size: 1.2rem;
+}
 
+// clear styling for the hamburger button (and any other buttons)
+button {
+    display: inline-block;
+    border: none;
+    margin: 0;
+    text-decoration: none;
+    background: transparent;
+    color: black;
+    cursor: pointer;
+    text-align: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
 
-/// MAIN PAGE CONTENT
+button:hover,
+button:focus {
+    background: transparent;
+}
+
+button:active,
+button:focus {
+    @extend %focus-outline;
+}
+
+// main navbar
+.navbar {
+    @extend %header-bar;
+    @extend %font-brand;
+    background: white;
+    fill: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    // navbar links
+    a {
+        color: black;
+
+        &:hover {
+            @extend %brand-hover-svg;
+        }
+    }
+
+    // navbar logo and site name
+    .branding {
+       flex: 1 0 0;
+       padding-left: 2rem;
+       text-align: left;
+    
+       svg {
+           height: 1.2rem;
+           width: auto;
+           vertical-align: middle;
+           padding-bottom: 0.10rem;
+       }
+    }
+
+    // navbar text links (large screens)
+    .items {
+        flex: 1 0 0;
+        padding-right: 2rem;
+        display: none;
+        text-align: right;
+
+        @include toggle-navbar {
+            display: inline-block;
+        }
+
+        .item {
+            display: inline-block;
+        }
+    }
+
+    // navbar toggle for sidebar (small screens)
+    .toggle {
+        flex: 1 0 0;
+        padding-right: 2rem;
+        display: inline-block;
+        text-align: right;
+        cursor: pointer;
+
+        @include toggle-navbar {    
+            display: none;
+        }
+
+        &:hover {
+            @extend %brand-hover-svg;
+        }
+    }
+}
+
+// sliding sidebar (small screens only)
+.sidebar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(white, 0.9);
+    text-align: right;
+    width: 100%;
+    height: 100vh;
+    overflow-y: hidden;
+
+    a {
+        color: black;
+
+        &:hover {
+            @extend %brand-hover-svg;
+        }
+    }
+
+    // sidebar header
+    .head {
+        @extend %header-bar;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        .toggle {
+            padding-right: 2rem;
+            cursor: pointer;
+            flex: 1 0 0;
+            text-align: right;
+            font-size: 1.65rem;
+
+            &:hover {
+               @extend %brand-hover-svg;
+            }
+        }
+    }
+
+    // sidebar nav link container
+    nav {
+        position: fixed;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    // sidebar items
+    .items {
+        padding-top: 3.6rem;
+        padding-right: 2rem;
+        font-size: 1.65rem;
+        line-height: 1.5;
+
+        .item {
+            display: block
+        }
+    }
+
+    // sidebar post navigation
+    .previous,
+    .next {
+        padding-left: 1rem;
+        padding-right: 2rem;
+        font-size: 2.25em;
+        line-height: 1.5;
+        color: #ddd;
+    }
+}
+
+// centered column div
 .site-content {
     margin: 0 auto;
     display: flex;
@@ -753,31 +874,65 @@ blockquote {
     height: 100vh;
 }
 
+// the <main> container on each page
 .site-main {
     padding: 0 1.25rem;
     flex: 1 0 auto;
+    // padding at end of article
+    padding-bottom: 5rem;
+
+    @include toggle-navbar {
+        padding-bottom: 0;
+    }
+
 }
 
+// this is a Hugo Block that can be overloaded by each template
+// for single pages it's the <article> itself
+// for list and term pages it's a <section>
 .main-content {
     display: flex;
     flex-direction: column;
-    //justify-content: space-between; // here
-    //align-content: stretch; // here
-    //align-items: stretch; // here
     flex: 1 0 auto;
-    height: 100%; // here
+    height: 100%;
 }
 
+// the main header at the top of each page's content
+.main-header {
+    padding-top: 4.6rem;
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+    padding-bottom: 2rem;
+    border-bottom-right-radius: 0.4rem;
+    border-bottom-left-radius: 0.4rem;
+    background-image: linear-gradient(0deg, $branding-accent, lighten($branding-accent, 40%));
+    box-shadow: 0 0.4rem 0.4rem rgba(70, 70, 70, 0.3);
+    display: flex;
+    flex-flow: column nowrap;
+
+    .title {
+        margin: 0;
+        color: white;
+    }
+
+    @include toggle-navbar {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+// this is where the Page.Content will be written
 .post-content {
     flex: 1 0 auto;
 }
 
-
-/// SITE FOOTER
+// keep the footer at the bottom of the page
+// templates can add to this with a block overload
 .main-footer {
     flex-shrink: 0;
 }
 
+// common footer with social links
 .site-footer {
     flex-shrink: 0;
     text-align: center;
@@ -817,11 +972,16 @@ blockquote {
 
     .copyright {
         @extend %font-brand;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
         font-size: 0.55rem;
         padding: 0.2rem 0;
         margin: 0;
 
-        &:before {
+        .notice:before {
             content: "\00A9";
             font-size: 1.4em;
             position: relative;
@@ -836,32 +996,8 @@ blockquote {
 }
 
 
-
-////// MAIN: ABOVE THE FOLD
-.main-header {
-    padding-top: 4.6rem;
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
-    padding-bottom: 2rem;
-    border-bottom-right-radius: 0.4rem;
-    border-bottom-left-radius: 0.4rem;
-    background-image: linear-gradient(0deg, $branding-accent, lighten($branding-accent, 40%));
-    box-shadow: 0 0.4rem 0.4rem rgba(70, 70, 70, 0.3);
-    display: flex;
-    flex-flow: column nowrap;
-
-    .title {
-        margin: 0;
-        color: white;
-    }
-
-    @include toggle-navbar {
-        padding-left: 2rem;
-        padding-right: 2rem;
-    }
-}
-
-
+//// SINGLE PAGES & POSTS
+// metadata for the header of each post page
 .post-metadata {
     font-size: 0.70em;
     text-transform: uppercase;
@@ -871,9 +1007,13 @@ blockquote {
         color: #eee;
         border-bottom: 1px dotted transparent;
 
+        &:focus {
+            @extend %focus-inverted;
+        }
+
         &:hover {
             @extend %hover-transition;
-            color: #fff;
+            color: white;
             border-bottom: 1px dotted white;
         }
     }  
@@ -904,101 +1044,7 @@ blockquote {
     }
 }
 
-
-
-
-////// MAIN CONTENT
-
-//////// LIST PAGE: CONTENT
-.summaries {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-content: space-around;
-    align-items: flex-start;
-    padding: 1rem;
-}
-
-.summary {
-    display: block;
-    padding: 0.5rem 0;
-
-    &:first-of-type {
-        padding-top: 0;
-    }
-
-    a {
-        color: black;
-        
-        &:hover {
-            @extend %brand-hover;
-        }
-    }
-
-    .metadata {
-        font-size: 0.7em;
-        padding-top: 0.2rem;
-        text-transform: uppercase;
-
-        @include toggle-navbar {
-            font-size: 0.85rem;
-        }
-
-        .items {
-            padding: 0;
-            display: flex;
-            align-items: baseline;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-
-            .item {
-                display: inline-block;
-                padding-right: 0.6rem;
-                padding-bottom: 0.2rem;
-
-                i {
-                    padding-right: 0.3rem;
-                }
-
-                &:last-of-type {
-                    padding-right: 0;
-                }
-            }
-        }
-    }
-
-
-    .title {
-        font-size: 1.4em;
-        font-weight: 400;
-        padding: 0;
-        margin: 0;
-    }
-
-    .body {
-        font-size: 0.90em;
-        font-weight: 200;
-        padding: 0 0.4rem;
-        padding-top: 0.2rem;
-        margin: 0;
-
-        p {
-            margin: 0;
-        }
-    }
-
-    .readmore {
-        font-size: 0.8em;
-        font-weight: 400;
-        text-align: right;
-    }
-}
-
-
-//////// POST PAGE CONTENT
-
-////////// LIST ELEMENTS
-
+/// COMMON ELEMENTS OF SINGLE PAGES
 // ordered lists
 .post-content ol {
     list-style: none;
@@ -1147,11 +1193,7 @@ blockquote {
     }
 }
 
-// data tables
-.table {
-    overflow-x: auto;
-}
-
+// tables (but not the ones used for highlighted code)
 table:not(.lntable) {
     font-size: 0.8em;
     margin: 1rem auto;
@@ -1186,7 +1228,6 @@ table:not(.lntable) {
             background: desaturate(lighten($branding-accent, 40%), 60%);
         }
     }
-   
 
     td {
         border: 1px solid #ddd;
@@ -1205,6 +1246,11 @@ table:not(.lntable) {
         }
 
     }
+}
+
+// width-limited tables using the table shortcode
+.table {
+    overflow-x: auto;
 }
 
 // in-post footnotes
@@ -1227,8 +1273,136 @@ table:not(.lntable) {
     font-weight: bold;
 }
 
+/// POST SOCIAL SHARING
+{{- $facebook := resources.Get ( printf "svg/fontawesome/facebook-f-brands.svg" ) | resources.Minify -}}
+{{- $twitter := resources.Get ( printf "svg/fontawesome/twitter-brands.svg" ) | resources.Minify -}}
+{{- $linkedin := resources.Get ( printf "svg/fontawesome/linkedin-in-brands.svg" ) | resources.Minify -}}
+{{- $whatsapp := resources.Get ( printf "svg/fontawesome/whatsapp-brands.svg" ) | resources.Minify -}}
+{{- $email := resources.Get ( printf "svg/fontawesome/at-solid.svg" ) | resources.Minify -}}
+{{- $link := resources.Get ( printf "svg/fontawesome/link-solid.svg" ) | resources.Minify }}
 
+.post-share {
 
+    padding: 1rem 0;
+
+    .title {
+        display: block;
+        padding: 0.2rem 0.95rem;
+        margin: 0;
+        border: 1px solid #333;
+        border-top-left-radius: 0.3rem;
+        border-top-right-radius: 0.3rem;
+        background: #333;
+        color: white;
+        font-size: 0.65em;
+        line-height: 1;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+
+    .items {
+        display: flex;
+        align-items: stretch;
+        align-content: center;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    .item {
+        display: block;
+        margin: 0;
+        padding: 0;
+        border: 1px solid #333;
+        border-right: none;
+        height: 2rem;
+        flex: 1 auto 2rem;
+
+        &:first-of-type {
+            border-bottom-left-radius: 0.3rem;
+        }
+
+        &:last-of-type {
+            border-bottom-right-radius: 0.3rem;
+            border-right: 1px solid #333;
+        }
+
+    }
+
+    amp-social-share {
+        display: inline-block;
+        background-size: 0.75rem;
+
+        &:focus {
+            @extend %focus-outline;
+        }
+
+    }
+
+    amp-social-share[type="facebook"] {
+        background-image: url('{{ $facebook.RelPermalink }}');
+        background-size: 0.50rem;
+    }
+
+    amp-social-share[type="twitter"] {
+        background-image: url('{{ $twitter.RelPermalink }}');
+        background-size: 0.85rem;
+    }
+
+    amp-social-share[type="linkedin"] {
+        background-image: url('{{ $linkedin.RelPermalink }}');
+    }
+
+    amp-social-share[type="email"] {
+        background-image: url('{{ $email.RelPermalink }}');
+        background-color: #fc4;
+        background-size: 0.80rem;
+    }
+
+    amp-social-share[type="whatsapp"] {
+        background-image: url('{{ $whatsapp.RelPermalink }}');
+    }
+
+    .link {
+        -webkit-user-select: all;
+        -moz-user-select: all;
+        -ms-user-select: all;
+        user-select: all;
+        height: 2rem;
+    
+        background-repeat: no-repeat;
+        background-position: 0.75rem;
+        background-image: url('{{ $link.RelPermalink }}');
+        background-size: 0.75rem;
+        background-color: #eee;
+
+        flex: 666 0 1rem;;
+
+        min-width: 1rem;
+
+        display: flex;
+        align-items: center;
+
+        a {
+            display: block;
+            padding-left: 2.2rem;
+            padding-right: 1.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 300;
+            font-size: 0.8em;
+            border: none;
+
+            &:hover {
+                border: none;
+            }
+        }
+    }
+}
+
+/// RELATED POSTS ASIDE
 .post-related {
     flex-shrink: 1;
     border-top: 0.1rem solid #ccc;
@@ -1283,59 +1457,7 @@ table:not(.lntable) {
     }   
 }
 
-.pagination {
-    @extend %font-brand;
-    font-size: 1.2em;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-top: 1rem;
-    display: flex;
-    justify-content: space-between;
-    color: #ddd;
-    padding: 0;
-    margin-bottom: 0;
-    text-align: center;
-
-    @include toggle-navbar {
-        font-size: 1.0em;
-    }
-
-    a {
-        color: black;
-        border: none;
-
-        &:hover {
-            @extend %brand-hover;
-        }
-    }
-
-    .active {
-        &:before {
-            content: "\007B";
-        }
-
-        &:after {
-            content: "\007D";
-        }
-    }
-
-    .item {
-        display: inline-block;
-        flex: 1 0 1.5rem;
-
-        @include toggle-navbar {
-            flex: 1 0 2rem;
-        } 
-    }
-
-    .spacer {
-        display: inline-block;
-        flex: 666;
-    }
-}
-
-
-// between post navigation
+/// NAVIGATION BETWEEN POSTS
 .post-nav {
     @extend %font-brand;
     font-size: 0.9rem;
@@ -1390,51 +1512,154 @@ table:not(.lntable) {
 }
 
 
+//// TERM / LIST PAGE CONTENT
+.summaries {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-content: space-around;
+    align-items: flex-start;
+    padding: 1rem;
+}
 
-.fontawesome {
-    display: inline-block;
-    height: auto;
-    width: 1.15em;
-    top: 0.15em;
-    position: relative;
+.summary {
+    display: block;
+    padding: 0.5rem 0;
 
-    &.calendar-solid {
-        width: 0.8em;
-        top: 0.06em;
+    &:first-of-type {
+        padding-top: 0;
     }
 
-    &.folder-open-solid {
-        width: 1.3em;
-        top: 0.20em;
-        left: -0.22em;
+    &:focus-within {
+        @extend %focus-outline;
     }
 
-    &.tag-solid {
-        width: 0.9em;
-        top: 0.09em;
-        left: -0.10em;
+
+    a {
+        color: black;
+
+        &:focus {
+            outline: none;
+        }
+        
+        &:hover {
+            @extend %brand-hover;
+        }
     }
 
-    &.file-alt-solid {
-        width: 0.7em;
-        top: 0.08em;
+    .metadata {
+        font-size: 0.7em;
+        padding-top: 0.2rem;
+        text-transform: uppercase;
+
+        @include toggle-navbar {
+            font-size: 0.85rem;
+        }
+
+        .items {
+            padding: 0;
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+
+            .item {
+                display: inline-block;
+                padding-right: 0.6rem;
+                padding-bottom: 0.2rem;
+
+                i {
+                    padding-right: 0.3rem;
+                }
+
+                &:last-of-type {
+                    padding-right: 0;
+                }
+            }
+        }
     }
 
-    &.book-solid {
-        width: 0.8em;
-        top: 0.12em;
+
+    .title {
+        font-size: 1.4em;
+        font-weight: 400;
+        padding: 0;
+        margin: 0;
     }
 
-    &.clock-solid {
-        width: 0.98em;
-        top: 0.12em;
-        left: -0.10em;
+    .body {
+        font-size: 0.90em;
+        font-weight: 200;
+        padding: 0 0.4rem;
+        padding-top: 0.2rem;
+        margin: 0;
+
+        p {
+            margin: 0;
+        }
     }
 
+    .readmore {
+        font-size: 0.8em;
+        font-weight: 400;
+        text-align: right;
+    }
+}
+
+/// PAGINATION
+.pagination {
+    @extend %font-brand;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    color: #ddd;
+    padding: 0;
+    margin-bottom: 0;
+    text-align: center;
+
+    @include toggle-navbar {
+        font-size: 1.0em;
+    }
+
+    a {
+        color: black;
+        border: none;
+
+        &:hover {
+            @extend %brand-hover;
+        }
+    }
+
+    .active {
+        &:before {
+            content: "\007B";
+        }
+
+        &:after {
+            content: "\007D";
+        }
+    }
+
+    .item {
+        display: inline-block;
+        flex: 1 0 1.5rem;
+
+        @include toggle-navbar {
+            flex: 1 0 2rem;
+        } 
+    }
+
+    .spacer {
+        display: inline-block;
+        flex: 666;
+    }
 }
 
 
-// TAXONOMY PAGE CONTENT (GENERATED ON THE FLY)
+/// TAXONOMY PAGE CONTENT (WORD CLOUD GENERATED ON THE FLY)
 .terms {
     display: flex;
     flex-wrap: wrap;

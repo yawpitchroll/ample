@@ -2,7 +2,7 @@
 {{- if or (.PrevInSection) (.NextInSection) }}
 <div class="previous">
 {{- if .PrevInSection }}
-    <a href="{{ .PrevInSection.RelPermalink }}" rel="prev" title="{{ .PrevInSection.Title }}">
+    <a href="{{ .PrevInSection.RelPermalink }}" rel="prev" title="Read &ldquo;{{ .PrevInSection.Title }}&rdquo;">
         {{ partial "util/fontawesome.html" "backward-solid" }}
     </a>
 {{- else }}
@@ -11,7 +11,7 @@
 </div>
 <div class="next">
 {{- if .NextInSection }}
-    <a href="{{ .NextInSection.RelPermalink }}" rel="next" title="{{ .NextInSection.Title }}">
+    <a href="{{ .NextInSection.RelPermalink }}" rel="next" title="Read &ldquo;{{ .NextInSection.Title }}&rdquo;">
         {{ partial "util/fontawesome.html" "forward-solid" }}
     </a>
 {{- else }}

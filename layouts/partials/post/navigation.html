@@ -3,7 +3,7 @@
 <nav class="post-nav">
 	<div class="previous">
 	{{- if .PrevInSection }}
-        <a href="{{ .PrevInSection.RelPermalink }}" rel="prev" title="{{ .PrevInSection.Title }}">
+        <a href="{{ .PrevInSection.RelPermalink }}" rel="prev" title="Read &ldquo;{{ .PrevInSection.Title }}&rdquo;">
             {{ partial "util/fontawesome.html" "backward-solid" }}
 			<span class="title">{{ .PrevInSection.Title | truncate 30 }}</span>
 		</a>
@@ -13,7 +13,7 @@
 	</div>
 	<div class="next">
 	{{- if .NextInSection }}
-        <a href="{{ .NextInSection.RelPermalink }}" rel="next" title="{{ .NextInSection.Title }}">
+        <a href="{{ .NextInSection.RelPermalink }}" rel="next" title="Read &ldquo;{{ .NextInSection.Title }}&rdquo;">
 			<span class="title">{{ .NextInSection.Title | truncate 30 }}</span>
             {{ partial "util/fontawesome.html" "forward-solid" }}
 		</a>

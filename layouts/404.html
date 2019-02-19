@@ -1,3 +1,22 @@
-{{ define "main" }}
-404 NOT FOUND
+{{- define "title" -}}
+{{ .Site.Params.Ample.Pages.E404.Title | default .Title }} | {{ .Site.Title }}
+{{- end -}}
+
+{{ define "body" }}
+{{- $entry_text := .Site.Params.Ample.Pages.E404.Text | default "404, So Sorry" -}}
+{{- $link := .Site.Params.Ample.Pages.E404.link | default "posts" -}}
+<div class="splash">
+    <div class="site-content">
+        <main class="splash-main error">
+            <a class="branding" href="/{{ lower $link }}" title="Return to {{ title $link }}">
+                {{ partial "util/logo.html" . | chomp }}
+                <h1 class="entry-text">{{ $entry_text }}</h1>
+            </a>
+        </main>
+
+        <footer class="site-footer">
+            {{ partial "nav/footbar.html" . | chomp }} 
+        </footer>
+    </div>
+</div>
 {{ end }}

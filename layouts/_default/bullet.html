@@ -1,11 +1,11 @@
 <li class="bullet">
-	<a href="{{ .URL }}">
+    <a href="{{ .URL }}" title="Read &ldquo;{{ .Title }}&rdquo;">
        {{- with .Params.date }}
        <span class="date">
            {{ partial "util/published.html" . | chomp }}
        </span>
        {{- end }}
-       <span class="title" title="{{ .Title }}">
+       <span class="title">
            {{ .Title | truncate 60 }}
        </span>
     </a>

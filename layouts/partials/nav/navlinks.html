@@ -1,0 +1,7 @@
+<ul class="items">
+{{- range .Site.Menus.main }}
+<li class="item">
+<a href="{{ .URL | relURL }}" title="{{ printf "Go to %s" .Name }}">{{ .Name }}</a>
+</li>
+{{- end }}
+</ul>

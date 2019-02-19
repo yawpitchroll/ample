@@ -1,0 +1,19 @@
+{{- .Scratch.Set "copyright" "" -}}
+{{- if .Site.Copyright -}}
+{{- .Scratch.Add "copyright" .Site.Copyright -}}
+{{- else -}}
+{{- $curr := dateFormat "2006" now -}}
+{{- $start := time (printf "%s-01-01" (.Site.Params.Ample.Copyright.Start | default $curr)) -}}
+{{- if (lt $start.Year now.Year) -}}
+    {{- .Scratch.Add "copyright" (printf "%s-" (partial "util/year.html" $start | chomp )) -}}
+{{- end -}}
+{{- .Scratch.Add "copyright" (partial "util/year.html" now | chomp ) -}}
+{{- with .Site.Params.Ample.Copyright.Holder -}}
+    {{- $.Scratch.Add "copyright" (printf " %s," .) -}}
+{{- end -}}
+{{- $rights := .Site.Params.Ample.Copyright.rights | default "All Rights Reserved" -}}
+{{- .Scratch.Add "copyright" (printf " %s." $rights) -}}
+{{- end -}}
+<small class="copyright">
+    <span class="notice">{{- .Scratch.Get "copyright" | markdownify }}</span><span class="powered">Powered by <a href="https://gohugo.io/" title="Visit Hugo">Hugo</a> and <a href="https://github.com/yawpitchroll/ample" title="Visit Ample">Ample</a></span>
+</small>

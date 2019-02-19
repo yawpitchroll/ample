@@ -1,24 +1,22 @@
 {{- define "title" -}}
-{{ .Title }}
+{{ .Site.Params.Ample.Pages.Home.Title | default "Home" }} | {{ .Site.Title }}
 {{- end -}}
 
 {{ define "body" }}
+{{- $entry_text := .Site.Params.Ample.Pages.Home.Text | default "Enter" -}}
+{{- $link := .Site.Params.Ample.Pages.Home.Link | default "posts" -}}
 <div class="splash">
     <div class="site-content">
         <main class="splash-main">
-            <a class="branding" href="/posts" title="Enter">
+            <a class="branding" href="/{{ lower $link }}" title="Go to {{ title $link }}">
                 {{ partial "util/logo.html" . | chomp }}
-                <span class="enter">Enter</span>
+                <h1 class="entry-text">{{ $entry_text }}</h1>
             </a>
         </main>
 
         <footer class="site-footer">
-            {{- partial "social.html" . | chomp }} 
-            {{- with .Site.Params.footer -}}
-            <p class="copyright">{{ . | markdownify }}</p>
-            {{- end }}
+            {{ partial "nav/footbar.html" . | chomp }} 
         </footer>
-
     </div>
 </div>
 {{ end }}

@@ -1,5 +1,5 @@
 {{- define "title" -}}
-{{ .Title | default (title .Type) }} | {{ (.Scratch.Get "branding").title }}
+{{ .Title | default (title .Type) }} | {{ .Site.Title }}
 {{- end -}}
 
 {{ define "main" }}

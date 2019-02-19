@@ -1,69 +1,58 @@
-{{- partial "variables.html" . -}}
 <!DOCTYPE html>
 <html ⚡ lang="{{ .Site.LanguageCode }}">
     <head>
         <meta charset="utf-8">
         <script async src="https://cdn.ampproject.org/v0.js"></script>
         <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-        <title>{{- block "title" . -}}{{- .Param "Title" -}} | {{- (.Scratch.Get "branding").title | chomp -}}{{- end -}}</title>
-        {{ partial "head_custom.html" . | chomp }}
+        <title>{{- block "title" . -}}{{- .Param "Title" | default .Title }} | {{ .Site.Title -}}{{- end -}}</title>
         {{ .Hugo.Generator }}
         <link rel="canonical" href="{{ .Permalink }}">
         {{ partialCached "amp/boilerplate.html" . | chomp }}
         {{ partial "amp/custom.html" . | chomp }}
         <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
-        <script async custom-element="amp-accordion" src="https://cdn.ampproject.org/v0/amp-accordion-0.1.js"></script>    
+        {{- block "amp-elements" . -}}
+        {{- end }}
     </head>
     <body>
     {{- block "body" . -}}
         <header class="navbar">
-            {{- with .Scratch.Get "branding" }}
             <a class="branding" href="/" title="Home">
                 {{ partial "util/logo.html" . | chomp }} 
-                {{ .title }}
+                {{ .Site.Title }}
             </a>
-            {{- end }}
+            {{ partial "a11y/skip-to-main.html" . | chomp }} 
             <nav>
-                <ul class="items">
-                    {{- range .Site.Menus.main }}
-                    <li class="item"><a href="{{ .URL | relURL }}" title="{{ .Name }}">{{ .Name }}</a></li>
-                    {{- end }}
-                </ul>
+                {{ partial "nav/navlinks.html" . | chomp }}
             </nav> 
-            <div class="toggle" role="button" aria-label="open menu" on="tap:nav-sidebar.toggle" tabindex="0">{{- partial "util/fontawesome.html" "bars-solid" -}}</div>
+            <button class="toggle" role="button" aria-label="open menu" on="tap:nav-sidebar.toggle" tabindex="0">
+                {{- partial "util/fontawesome.html" "bars-solid" -}}
+            </button>
         </header>
 
         <amp-sidebar id="nav-sidebar" class="sidebar" layout="nodisplay" side="right">
             <div class="head">
-                <div class="toggle" role="button" aria-label="close menu" on="tap:nav-sidebar.toggle" tabindex="0">
+                <button class="toggle" role="button" aria-label="close menu" on="tap:nav-sidebar.toggle" tabindex="0">
                     {{- partial "util/fontawesome.html" "arrow-right-solid" -}}
-                </div>
+                </button>
             </div>
             <nav>
-                <ul class="items">
-                    {{- range .Site.Menus.main }}
-                    <li class="item"><a href="{{ .URL | relURL }}">{{ .Name }}</a></li>
-                    {{- end }}
-                </ul>
+                {{ partial "nav/navlinks.html" . | chomp }}
                 {{- block "sidebar" . -}}
                 {{- end }}
             </nav>
         </amp-sidebar>
 
         <div class="site-content">
-            <main class="site-main">
+            <main id="main" class="site-main" tabindex=-1>
                 {{- block "main" . -}}
                 {{- end }}
             </main>
+
             <footer class="site-footer">
                 {{- block "footer" . -}}
                 {{- end }}
                 <hr/>
-                {{- partial "foot_custom.html" . | chomp }}
-                {{- partial "social.html" . | chomp }} 
-                {{- with .Site.Params.footer -}}
-                <p class="copyright">{{ . | markdownify }}</p>
-                {{- end }}
+                {{ partial "nav/footbar.html" . | chomp }} 
             </footer>
         </div>
     {{- end -}}

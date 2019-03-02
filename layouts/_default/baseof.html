@@ -4,13 +4,29 @@
         <meta charset="utf-8">
         <script async src="https://cdn.ampproject.org/v0.js"></script>
         <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+        <meta name="theme-color" content="{{- .Site.Params.Ample.Style.accentColor | default "#0379C4" -}}">
         <title>{{- block "title" . -}}{{- .Param "Title" | default .Title }} | {{ .Site.Title -}}{{- end -}}</title>
         {{ .Hugo.Generator }}
         <link rel="canonical" href="{{ .Permalink }}">
+        {{- with .RSSLink }}
+        <link href="{{ . }}" rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}">
+        {{- end }}
         {{ partialCached "amp/boilerplate.html" . | chomp }}
         {{ partial "amp/custom.html" . | chomp }}
         <script async custom-element="amp-sidebar" src="https://cdn.ampproject.org/v0/amp-sidebar-0.1.js"></script>
         {{- block "amp-elements" . -}}
+        {{- end }}
+        
+        {{- with .Site.Params.Ample.Author.displayName -}}
+        <meta name="author" content="{{ . }}">
+        {{- end }}
+        {{ partial "seo/opengraph/common.html" . | chomp }}
+        {{- block "opengraph" . -}}
+        {{- end }}
+        {{ partial "seo/twitter_cards.html" . | chomp }}
+        {{ partial "seo/schema.html" . | chomp }}
+        {{- with .Site.Params.Ample.Site.googleSiteVerificationID -}}
+        <meta name="google-site-verification" content="{{ . }}">
         {{- end }}
     </head>
     <body>

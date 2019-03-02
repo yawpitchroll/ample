@@ -1,0 +1,26 @@
+<div class="post-share">
+<span class="title">Share this post</span>
+<ul class="items">
+{{- with .Site.Params.Ample.Social.share -}}
+{{- range sort . "weight" "asc" }}
+{{- $setup := index $.Site.Data.social.share .provider -}}
+{{- $default := printf "Share on %s" $setup.name -}}
+<li class="item">
+{{- if (eq .provider "facebook") -}}
+<amp-social-share type="{{ .provider }}" title="{{ .title | default $default }}" data-param-app_id="{{ .id }}" height=2rem width=2rem></amp-social-share>
+{{- else -}}
+<amp-social-share type="{{ .provider }}" title="{{ .title | default $default }}" height=2rem width=2rem></amp-social-share>
+{{- end -}}
+</li>
+{{- end -}}
+{{- end -}}
+{{- with .Site.Data.social.share.email -}}
+{{- $title := printf "Share in an %s" .name -}}
+<li class="item">
+<amp-social-share type="email" title="{{ $title }}" height=2rem width=2rem></amp-social-share>
+</li>
+{{- end -}}
+<li class="item link">
+<a title="Right click to copy the link for &ldquo;{{ .Title }}&rdquo;" href="{{ .Permalink }}" target="_blank">{{ .Permalink }}</a>
+</li>
+</div>

@@ -976,17 +976,26 @@ button:focus {
         flex-wrap: wrap;
         justify-content: center;
         align-content: center;
-        align-items: center;
+        align-items: baseline;
         font-size: 0.55rem;
         padding: 0.2rem 0;
         margin: 0;
 
-        .notice:before {
-            content: "\00A9";
-            font-size: 1.4em;
-            position: relative;
-            top: 0.08em;
-            padding-right: 0.2em;
+        .notice {
+
+            padding: 0 0.4rem;
+            
+            &:before {
+                content: "\00A9";
+                font-size: 1.4em;
+                position: relative;
+                top: 0.08em;
+                padding-right: 0.2em;
+            }
+        }
+
+        .powered {
+            //margin-left: 2rem;
         }
 
         @include toggle-navbar {
@@ -1274,13 +1283,6 @@ table:not(.lntable) {
 }
 
 /// POST SOCIAL SHARING
-{{- $facebook := resources.Get ( printf "svg/fontawesome/facebook-f-brands.svg" ) | resources.Minify -}}
-{{- $twitter := resources.Get ( printf "svg/fontawesome/twitter-brands.svg" ) | resources.Minify -}}
-{{- $linkedin := resources.Get ( printf "svg/fontawesome/linkedin-in-brands.svg" ) | resources.Minify -}}
-{{- $whatsapp := resources.Get ( printf "svg/fontawesome/whatsapp-brands.svg" ) | resources.Minify -}}
-{{- $email := resources.Get ( printf "svg/fontawesome/at-solid.svg" ) | resources.Minify -}}
-{{- $link := resources.Get ( printf "svg/fontawesome/link-solid.svg" ) | resources.Minify }}
-
 .post-share {
 
     padding: 1rem 0;
@@ -1333,6 +1335,7 @@ table:not(.lntable) {
     amp-social-share {
         display: inline-block;
         background-size: 0.75rem;
+        background-repeat: no-repeat;
 
         &:focus {
             @extend %focus-outline;
@@ -1340,42 +1343,58 @@ table:not(.lntable) {
 
     }
 
-    amp-social-share[type="facebook"] {
-        background-image: url('{{ $facebook.RelPermalink }}');
-        background-size: 0.50rem;
+    // add styles for social share providers chosen in config.toml
+    // each is configured using /data/social/share/$provider.toml
+    {{ with .Site.Params.Ample.Social.share }}
+    {{- range sort . "weight" "asc" }}
+    {{- $setup := index $.Site.Data.social.share .provider }}
+    {{- $icon := resources.Get ( printf "svg/fontawesome/%s.svg" $setup.icon ) | resources.Minify }}
+    amp-social-share[type="{{ .provider }}"] {
+        background-image: url('{{ $icon.RelPermalink }}');
+        {{ with $setup.size_factor }}
+        background-size: 0.75rem * {{ . }};
+        {{ end }}
+        {{ with $setup.color }}
+        background-color: {{ . }};
+        {{ end }}
     }
+    {{- end }}
+    {{- end }}
 
-    amp-social-share[type="twitter"] {
-        background-image: url('{{ $twitter.RelPermalink }}');
-        background-size: 0.85rem;
-    }
-
-    amp-social-share[type="linkedin"] {
-        background-image: url('{{ $linkedin.RelPermalink }}');
-    }
-
+    // add style for social share email as configured in data/social/share/email.toml
+    {{- with .Site.Data.social.share.email }}
+    {{- $icon := resources.Get ( printf "svg/fontawesome/%s.svg" .icon ) | resources.Minify }}
     amp-social-share[type="email"] {
-        background-image: url('{{ $email.RelPermalink }}');
-        background-color: #fc4;
-        background-size: 0.80rem;
+        background-image: url('{{ $icon.RelPermalink }}');
+        {{ with .size_factor }}
+        background-size: 0.75rem * {{ . }};
+        {{ end }}
+        {{ with .color }}
+        background-color: {{ . }};
+        {{ end }}
     }
+    {{- end }}
 
-    amp-social-share[type="whatsapp"] {
-        background-image: url('{{ $whatsapp.RelPermalink }}');
-    }
-
+    // add style for social share link as configured in data/social/share/link.toml
+    {{- with .Site.Data.social.share.link }}
+    {{- $icon := resources.Get ( printf "svg/fontawesome/%s.svg" .icon ) | resources.Minify }}
     .link {
         -webkit-user-select: all;
         -moz-user-select: all;
         -ms-user-select: all;
         user-select: all;
         height: 2rem;
-    
+        background-size: 0.75rem;
         background-repeat: no-repeat;
         background-position: 0.75rem;
-        background-image: url('{{ $link.RelPermalink }}');
-        background-size: 0.75rem;
-        background-color: #eee;
+
+        background-image: url('{{ $icon.RelPermalink }}');
+        {{ with .size_factor }}
+        background-size: 0.75rem * {{ . }};
+        {{ end }}
+        {{ with .color }}
+        background-color: {{ . }};
+        {{ end }}
 
         flex: 666 0 1rem;;
 
@@ -1400,6 +1419,7 @@ table:not(.lntable) {
             }
         }
     }
+    {{- end }}
 }
 
 /// RELATED POSTS ASIDE

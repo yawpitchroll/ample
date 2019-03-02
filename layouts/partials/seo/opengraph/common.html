@@ -1,0 +1,56 @@
+{{- /* Required Basic Properties */ -}}
+<meta property="og:title" content="{{ .Title | title }}">
+<meta property="og:description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ with .Params.Excerpt }}{{ . }}{{ else }}{{ .Summary | plainify | htmlUnescape }}{{ end }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end }}">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+
+{{- /* Required Image Properties */ -}}
+{{- with $.Param "images" }}
+{{- range first 5 . -}}
+<meta property="og:image" content="{{ . | absURL }}">
+{{- end }}
+{{- else }}
+<meta property="og:image" content="{{ "opengraph.png" | absURL }}">
+{{- end -}}
+
+{{- /* Optional but Common Properties */ -}}
+{{- with .Params.locale }}
+<meta property="og:locale" content="{{ . }}">
+{{- else -}}
+{{- with .Site.Params.Locale }}
+<meta property="og:locale" content="{{ . }}">
+{{- else -}}
+{{- with .Site.LanguageCode }}
+{{- $prefix := replaceRE "^([A-Za-z]+)-.*$" "$1" . -}}
+{{- $suffix := upper (replaceRE "^.*-([A-Za-z]+)$" "$1" . ) -}}
+<meta property="og:locale" content="{{ replace . "-" "_" }}">
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- /* Facebook App ID */ -}}
+{{- with .Site.Params.Ample.SEO.Facebook.AppID }}
+<meta property='fb:app_id' content='{{ . }}'>
+{{- end }}
+
+{{- /* Facebook Admin IDs */ -}}
+{{- with .Site.Params.Ample.SEO.Facebook.Admins }}
+{{- range . }}
+<meta property="fb:admins" content="{{ . }}">
+{{- end }}
+{{- end }}
+
+{{- with .Params.audio }}
+{{- range . }}
+<meta property="og:audio" content="{{ . | absURL }}">
+{{ end }}
+{{ end }}
+
+{{- with .Params.videos }}
+{{- range . }}
+<meta property="og:video" content="{{ . | absURL }}">
+{{ end }}
+{{ end }}
+
+
+

@@ -1,14 +1,29 @@
 <address class="social">
     <ul class="social-items">
-        {{- if .Site.Menus.icon -}}
-        {{- range sort .Site.Menus.icon }}
+        {{- with .Site.Data.social.links.email -}}
+        {{- $title := printf "Send an %s" .name -}}
         <li class="social-item">
-            <a href="{{ .URL }}" {{ if .Title -}}title="{{ .Title }}"{{ end }} target="_blank">{{- partial "util/fontawesome.html" .Name -}}<span class="screen-reader">{{ if .Title -}}{{ .Title }}{{ else }}.Name{{ end }}</span></a>
+            <a href="mailto:{{ $.Site.Params.Ample.Author.Social.email }}" title="{{ $title }}"  target="_blank">{{- partial "util/fontawesome.html" .icon -}}<span class="screen-reader">{{ $title }}</span></a>
+        </li>
+        {{- end }}
+        {{- with .Site.Params.Ample.Social.links -}}
+        {{- range sort . "weight" "asc" }}
+        {{- $setup := index $.Site.Data.social.links .name -}}
+        {{- $username := index $.Site.Params.Ample.Author.Social .name -}}
+        {{- $url := replace $setup.url "{USERNAME}" $username -}}
+        {{- $default := printf "Connect on %s" $setup.name -}}
+        <li class="social-item">
+            <a href="{{ $url }}" title="{{ .Title | default $default }}" target="_blank">{{- partial "util/fontawesome.html" $setup.icon -}}<span class="screen-reader">{{ .Title | default $default }}</span></a>
         </li>
         {{- end -}}
         {{ end }}
+        {{- if .RSSLink -}}
+        {{- with .Site.Data.social.links.rss -}}
+        {{- $title := printf "Subscribe via %s" .name -}}
         <li class="social-item">
-            <a href="{{ .RSSLink }}" title="Subscribe by RSS">{{- partial "util/fontawesome.html" "rss-square-solid" -}}<span class="screen-reader">Subscribe by RSS</span></a>
+            <a href="{{ .RSSLink }}" title="{{ $title }}">{{- partial "util/fontawesome.html" .icon -}}<span class="screen-reader">{{ $title }}</span></a>
         </li>
+        {{- end -}}
+        {{- end }}
     </ul>
 </address>
